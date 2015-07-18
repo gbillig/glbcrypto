@@ -1,12 +1,14 @@
 /*
  ============================================================================
- Name        : karabiner.h
+ Name        : misc.h
  Author      : glb
  License     : MIT
  ============================================================================
  */
 
-#ifndef KARABINER_H_
-#define KARABINER_H_
+#ifndef MISC_H_
+#define MISC_H_
 
-#endif /* KARABINER_H_ */
+void print_value(int* value, int length);
+
+#endif /* MISC_H_ */
