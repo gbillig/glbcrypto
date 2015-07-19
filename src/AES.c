@@ -17,6 +17,7 @@
 
 //shiftIndex: positive is to the left
 int * rotWord(int input[], int shift_index) {
+
 	static int new_array[4];
 	int i, j;
 	for (i=0; i<4; i++) {
@@ -446,7 +447,7 @@ int * expandKey(int key_size, int key[]) {
 //----------
 
 int * encrypt(int state[], int expanded_key[], int key_size) {
-	int i,j,k;
+	int i,j;
 	int expanded_key_size = (key_size + 28) * 4;
 	int small_coef = key_size / 4;
 	int encryption_rounds = small_coef + 6;
