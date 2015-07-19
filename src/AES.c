@@ -16,17 +16,17 @@
 
 
 //shiftIndex: positive is to the left
-int * rotWord(int input[], int shiftIndex) {
-	static int newArray[4];
+int * rotWord(int input[], int shift_index) {
+	static int new_array[4];
 	int i, j;
 	for (i=0; i<4; i++) {
-		j = (i + shiftIndex + 4) % 4;
-		newArray[i] = input[j];
+		j = (i + shift_index + 4) % 4;
+		new_array[i] = input[j];
 	}
-	return newArray;
+	return new_array;
 };
 
-int * subWord(int input[], int arrLength, int cryptoMode) {
+int * subWord(int input[], int arr_length, int crypto_mode) {
 	unsigned char S[256] =
 	{
 	   0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
@@ -67,98 +67,98 @@ int * subWord(int input[], int arrLength, int cryptoMode) {
 	   0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D
 	};
 
-	static int newArray[16];
+	static int new_array[16];
 	int i;
 
-	for (i=0; i<arrLength; i++) {
-		if (cryptoMode) {
-			newArray[i] = S[input[i]];
+	for (i=0; i<arr_length; i++) {
+		if (crypto_mode) {
+			new_array[i] = S[input[i]];
 		} else {
-			newArray[i] = inv_S[input[i]];
+			new_array[i] = inv_S[input[i]];
 		}
 	}
 
-	return newArray;
+	return new_array;
 }
 
 int * rcon(int input) {
-	static int newArray[4] = {0x00, 0x00, 0x00, 0x00};
+	static int new_array[4] = {0x00, 0x00, 0x00, 0x00};
 
 	switch(input) {
 	case 0 :
-		newArray[0] = 0x01;
+		new_array[0] = 0x01;
 		break;
 	case 1 :
-		newArray[0] = 0x02;
+		new_array[0] = 0x02;
 		break;
 	case 2 :
-		newArray[0] = 0x04;
+		new_array[0] = 0x04;
 		break;
 	case 3 :
-		newArray[0] = 0x08;
+		new_array[0] = 0x08;
 		break;
 	case 4 :
-		newArray[0] = 0x10;
+		new_array[0] = 0x10;
 		break;
 	case 5 :
-		newArray[0] = 0x20;
+		new_array[0] = 0x20;
 		break;
 	case 6 :
-		newArray[0] = 0x40;
+		new_array[0] = 0x40;
 		break;
 	case 7 :
-		newArray[0] = 0x80;
+		new_array[0] = 0x80;
 		break;
 	case 8 :
-		newArray[0] = 0x1B;
+		new_array[0] = 0x1B;
 		break;
 	case 9 :
-		newArray[0] = 0x36;
+		new_array[0] = 0x36;
 		break;
 	case 10 :
-		newArray[0] = 0x6C;
+		new_array[0] = 0x6C;
 		break;
 	case 11 :
-		newArray[0] = 0xD8;
+		new_array[0] = 0xD8;
 		break;
 	case 12 :
-		newArray[0] = 0xAB;
+		new_array[0] = 0xAB;
 		break;
 	case 13 :
-		newArray[0] = 0x4D;
+		new_array[0] = 0x4D;
 		break;
 	case 14 :
-		newArray[0] = 0x9A;
+		new_array[0] = 0x9A;
 		break;
 	}
 
-	return newArray;
+	return new_array;
 };
 
-int * ek(int expandedKey[], int offset) {
-	static int newArray[4];
+int * ek(int expanded_key[], int offset) {
+	static int new_array[4];
 	int i;
 
 	for (i=0; i<4; i++){
-		newArray[i] = expandedKey[offset + i];
+		new_array[i] = expanded_key[offset + i];
 	}
 
-	return newArray;
+	return new_array;
 };
 
 int * k(int key[], int offset) {
-	static int newArray[4];
+	static int new_array[4];
 	int i;
 
 	for (i=0; i<4; i++) {
-		newArray[i] = key[offset + i];
+		new_array[i] = key[offset + i];
 	}
 
-	return newArray;
+	return new_array;
 }
 
-int * shiftRow(int input[], int cryptoMode) {
-	static int newArray[16];
+int * shiftRow(int input[], int crypto_mode) {
+	static int new_array[16];
 	static int row0[4];
 	static int row1[4];
 	static int row2[4];
@@ -166,12 +166,12 @@ int * shiftRow(int input[], int cryptoMode) {
 	int i;
 	int *t;
 
-	int shiftDirection;
+	int shift_direction;
 
-	if (cryptoMode) {
-		shiftDirection = 1;
+	if (crypto_mode) {
+		shift_direction = 1;
 	} else {
-		shiftDirection = -1;
+		shift_direction = -1;
 	}
 
 
@@ -182,30 +182,30 @@ int * shiftRow(int input[], int cryptoMode) {
 		row3[i] = input[(i*4)+3];
 	}
 
-	t = rotWord(row1, 1*shiftDirection);
+	t = rotWord(row1, 1*shift_direction);
 	for (i=0; i<4; i++) {
 		row1[i] = *(t+i);
 	}
-	t = rotWord(row2, 2*shiftDirection);
+	t = rotWord(row2, 2*shift_direction);
 	for (i=0; i<4; i++) {
 		row2[i] = *(t+i);
 	}
-	t = rotWord(row3, 3*shiftDirection);
+	t = rotWord(row3, 3*shift_direction);
 	for (i=0; i<4; i++) {
 		row3[i] = *(t+i);
 	}
 
 	for (i=0; i<4; i++) {
-		newArray[(i*4)+0] = row0[i];
-		newArray[(i*4)+1] = row1[i];
-		newArray[(i*4)+2] = row2[i];
-		newArray[(i*4)+3] = row3[i];
+		new_array[(i*4)+0] = row0[i];
+		new_array[(i*4)+1] = row1[i];
+		new_array[(i*4)+2] = row2[i];
+		new_array[(i*4)+3] = row3[i];
 	}
 
-	return newArray;
+	return new_array;
 }
 
-int * mixColumn(int input[], int mMatrix[]) {
+int * mixColumn(int input[], int m_matrix[]) {
 	unsigned char E[256] =
 	{
 			0x01, 0x03, 0x05, 0x0F, 0x11, 0x33, 0x55, 0xFF, 0x1A, 0x2E, 0x72, 0x96, 0xA1, 0xF8, 0x13, 0x35,
@@ -246,28 +246,28 @@ int * mixColumn(int input[], int mMatrix[]) {
 			0x67, 0x4A, 0xED, 0xDE, 0xC5, 0x31, 0xFE, 0x18, 0x0D, 0x63, 0x8C, 0x80, 0xC0, 0xF7, 0x70, 0x07
 	};
 
-	static int newArray[16];
+	static int new_array[16];
 	int i;
-	int columnNum, rowNum;
+	int column_num, row_num;
 
 	for (i=0;i<16;i++) {
-		columnNum = i/4;
-		rowNum = i%4;
-		newArray[i] =
-				E[ (L[ input[ columnNum * 4 + 0]] + L[ mMatrix[ rowNum * 4 + 0]]) % 255] ^
-				E[ (L[ input[ columnNum * 4 + 1]] + L[ mMatrix[ rowNum * 4 + 1]]) % 255] ^
-				E[ (L[ input[ columnNum * 4 + 2]] + L[ mMatrix[ rowNum * 4 + 2]]) % 255] ^
-				E[ (L[ input[ columnNum * 4 + 3]] + L[ mMatrix[ rowNum * 4 + 3]]) % 255];
+		column_num = i/4;
+		row_num = i%4;
+		new_array[i] =
+				E[ (L[ input[ column_num * 4 + 0]] + L[ m_matrix[ row_num * 4 + 0]]) % 255] ^
+				E[ (L[ input[ column_num * 4 + 1]] + L[ m_matrix[ row_num * 4 + 1]]) % 255] ^
+				E[ (L[ input[ column_num * 4 + 2]] + L[ m_matrix[ row_num * 4 + 2]]) % 255] ^
+				E[ (L[ input[ column_num * 4 + 3]] + L[ m_matrix[ row_num * 4 + 3]]) % 255];
 
 		//printf("b%d = b%d * %d XOR b%d * %d XOR b%d * %d XOR b%d * %d\n", i, columnNum * 4 + 0, rowNum * 4 + 0, columnNum * 4 + 1, rowNum * 4 + 1, columnNum * 4 + 2, rowNum * 4 + 2, columnNum * 4 + 3, rowNum * 4 + 3);
 		//printf("E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x))\n", input[ columnNum * 4 + 0], mMatrix[ rowNum * 4 + 0], input[ columnNum * 4 + 1], mMatrix[ rowNum * 4 + 1], input[ columnNum * 4 + 2], mMatrix[ rowNum * 4 + 2], input[ columnNum * 4 + 3], mMatrix[ rowNum * 4 + 3]);
 		//printf("E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x)\n", L[ input[ columnNum * 4 + 0]], L[ mMatrix[ rowNum * 4 + 0]], L[ input[ columnNum * 4 + 1]], L[ mMatrix[ rowNum * 4 + 1]], L[ input[ columnNum * 4 + 2]], L[ mMatrix[ rowNum * 4 + 2]], L[ input[ columnNum * 4 + 3]], L[ mMatrix[ rowNum * 4 + 3]]);
 		//printf("E(%0x) ^ E(%0x) ^ E(%0x) ^ E(%0x)\n", (L[ input[ columnNum * 4 + 0]] + L[ mMatrix[ rowNum * 4 + 0]]) % 255, (L[ input[ columnNum * 4 + 1]] + L[ mMatrix[ rowNum * 4 + 1]]) % 255, (L[ input[ columnNum * 4 + 2]] + L[ mMatrix[ rowNum * 4 + 2]]) % 255, (L[ input[ columnNum * 4 + 3]] + L[ mMatrix[ rowNum * 4 + 3]]) % 255);
 		//printf("%0x ^ %0x ^ %0x ^ %0x\n", E[ (L[ input[ columnNum * 4 + 0]] + L[ mMatrix[ rowNum * 4 + 0]]) % 255],	E[ (L[ input[ columnNum * 4 + 1]] + L[ mMatrix[ rowNum * 4 + 1]]) % 255], E[ (L[ input[ columnNum * 4 + 2]] + L[ mMatrix[ rowNum * 4 + 2]]) % 255], E[ (L[ input[ columnNum * 4 + 3]] + L[ mMatrix[ rowNum * 4 + 3]]) % 255]);
-		//printf("%0x\n", newArray[i]);
+		//printf("%0x\n", new_array[i]);
 	}
 
-	return newArray;
+	return new_array;
 }
 
 //-----------------------
@@ -346,29 +346,29 @@ int functionTests(void) {
 //KEY EXPANSION ALGORITHM
 //-----------------------
 
-int * expandKey(int keySize, int key[]) {
+int * expandKey(int key_size, int key[]) {
 
 	int i,j;
-	int expansionRounds = keySize + 28;
-	int expandedKeySize = expansionRounds * 4;
-	int smallCoef = keySize / 4;
-	static int expandedKey[240];
+	int expansion_rounds = key_size + 28;
+	int expanded_key_size = expansion_rounds * 4;
+	int small_coef = key_size / 4;
+	static int expanded_key[240];
 	int *t;
 	int t1Array[4];
 	int t2Array[4];
 	int t3Array[4];
 
-	int byteIndex;
-	for(i=0; i<expansionRounds; i++) {
-		byteIndex = i*4;
+	int byte_index;
+	for(i=0; i<expansion_rounds; i++) {
+		byte_index = i*4;
 		if (i<4) {
-			t = k(key, byteIndex);
+			t = k(key, byte_index);
 			for (j=0; j<4; j++) {
-				expandedKey[byteIndex + j] = *(t+j);
+				expanded_key[byte_index + j] = *(t+j);
 			}
-//			printf("Round %d: K(%d)\n", i, byteIndex);
-		} else if (i % smallCoef == 0) {
-			t = ek(expandedKey, (i-1)*4);
+			//printf("Round %d: K(%d)\n", i, byte_index);
+		} else if (i % small_coef == 0) {
+			t = ek(expanded_key, (i-1)*4);
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
@@ -381,23 +381,23 @@ int * expandKey(int keySize, int key[]) {
 				t1Array[j] = *(t+j);
 			}
 
-			t = rcon(i/smallCoef - 1);
+			t = rcon(i/small_coef - 1);
 			for (j=0; j<4; j++) {
 				t2Array[j] = *(t+j);
 			}
 
-			t = ek(expandedKey, (i-smallCoef)*4);
+			t = ek(expanded_key, (i-small_coef)*4);
 			for (j=0; j<4; j++) {
 				t3Array[j] = *(t+j);
 			}
 
 			for (j=0; j<4; j++) {
-				expandedKey[byteIndex + j] = t1Array[j] ^ t2Array[j] ^ t3Array[j];
+				expanded_key[byte_index + j] = t1Array[j] ^ t2Array[j] ^ t3Array[j];
 			}
-//			printf("Round %d: SubWord(RotWord(EK(%d-1)*4)) XOR Rcon((%d/%d)-1) XOR EK((%d-%d)*4)\n", i, i, i, smallCoef, i, smallCoef);
+			//printf("Round %d: SubWord(RotWord(EK(%d-1)*4)) XOR Rcon((%d/%d)-1) XOR EK((%d-%d)*4)\n", i, i, i, small_coef, i, small_coef);
 
-		} else if (keySize == 32 && (i-4) % 8 == 0) {
-			t = ek(expandedKey, (i-1)*4);
+		} else if (key_size == 32 && (i-4) % 8 == 0) {
+			t = ek(expanded_key, (i-1)*4);
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
@@ -406,52 +406,52 @@ int * expandKey(int keySize, int key[]) {
 				t1Array[j] = *(t+j);
 			}
 
-			t = ek(expandedKey, (i-8)*4);
+			t = ek(expanded_key, (i-8)*4);
 			for (j=0; j<4; j++) {
 				t2Array[j] = *(t+j);
 			}
 
 			for (j=0; j<4; j++) {
-				expandedKey[byteIndex + j] = t1Array[j] ^ t2Array[j];
+				expanded_key[byte_index + j] = t1Array[j] ^ t2Array[j];
 			}
-//			printf("Round %d: SubWord(EK((%d-1)*4)) XOR EK(%d-8)*4\n", i, i, i);
+			//printf("Round %d: SubWord(EK((%d-1)*4)) XOR EK(%d-8)*4\n", i, i, i);
 		} else {
-			t = ek(expandedKey, (i-1)*4);
+			t = ek(expanded_key, (i-1)*4);
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
-			t = ek(expandedKey, (i-smallCoef)*4);
+			t = ek(expanded_key, (i-small_coef)*4);
 			for (j=0; j<4; j++) {
 				t2Array[j] = *(t+j);
 			}
 
 			for (j=0; j<4; j++) {
-				expandedKey[byteIndex + j] = t1Array[j] ^ t2Array[j];
+				expanded_key[byte_index + j] = t1Array[j] ^ t2Array[j];
 			}
-//			printf("Round %d: EK((%d-1)*4) XOR EK((%d-%d)*4)\n", i, i, i, smallCoef);
+			//printf("Round %d: EK((%d-1)*4) XOR EK((%d-%d)*4)\n", i, i, i, small_coef);
 		}
 	}
 
 	printf("Expanded Key:\n");
-	for(i=0; i<expandedKeySize; i++) {
-		printf("%02x ", expandedKey[i]);
+	for(i=0; i<expanded_key_size; i++) {
+		printf("%02x ", expanded_key[i]);
 	}
 	printf("\n");
 
-	return expandedKey;
+	return expanded_key;
 }
 
 //----------
 //ENCRYPTION
 //----------
 
-int * encrypt(int state[], int expandedKey[], int keySize) {
+int * encrypt(int state[], int expanded_key[], int key_size) {
 	int i,j,k;
-	int expandedKeySize = (keySize + 28) * 4;
-	int smallCoef = keySize / 4;
-	int encryptionRounds = smallCoef + 6;
-	int expandedKeyRound = 0;
-	int multiplicationMatrix[16] = {2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2, 3, 3, 1, 1, 2};
+	int expanded_key_size = (key_size + 28) * 4;
+	int small_coef = key_size / 4;
+	int encryption_rounds = small_coef + 6;
+	int expanded_key_round = 0;
+	int multiplication_matrix[16] = {2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2, 3, 3, 1, 1, 2};
 
 
 	int *p;
@@ -459,13 +459,13 @@ int * encrypt(int state[], int expandedKey[], int keySize) {
 
 	//initial Add Round Key
 	for (i=0; i < 16; i++) {
-		state[i] = state[i] ^ expandedKey[expandedKeyRound * 16 + i];
+		state[i] = state[i] ^ expanded_key[expanded_key_round * 16 + i];
 	}
-	expandedKeyRound++;
+	expanded_key_round++;
 
 	//print_value(state, 16);
 
-	for (i=0; i < encryptionRounds; i++) {
+	for (i=0; i < encryption_rounds; i++) {
 
 		p = subWord(state, 16, 1);
 		for (j=0; j < 16; j++) {
@@ -481,8 +481,8 @@ int * encrypt(int state[], int expandedKey[], int keySize) {
 
 		//print_value(state, 16);
 
-		if (i != encryptionRounds - 1) {
-			p = mixColumn(state, multiplicationMatrix);
+		if (i != encryption_rounds - 1) {
+			p = mixColumn(state, multiplication_matrix);
 			for (j=0; j < 16; j++) {
 				state[j] = *(p+j);
 			}
@@ -491,9 +491,9 @@ int * encrypt(int state[], int expandedKey[], int keySize) {
 		}
 
 		for (j=0; j < 16; j++) {
-			state[j] = state[j] ^ expandedKey[expandedKeyRound * 16 + j];
+			state[j] = state[j] ^ expanded_key[expanded_key_round * 16 + j];
 		}
-		expandedKeyRound++;
+		expanded_key_round++;
 
 		//print_value(state, 16);
 	}
@@ -505,13 +505,13 @@ int * encrypt(int state[], int expandedKey[], int keySize) {
 //DECRYPTION
 //----------
 
-int * decrypt(int state[], int expandedKey[], int keySize) {
+int * decrypt(int state[], int expanded_key[], int key_size) {
 
 	int i,j,k;
-	int expandedKeySize = (keySize + 28) * 4;
-	int smallCoef = keySize / 4;
-	int encryptionRounds = smallCoef + 6;
-	int expandedKeyRound = 0;
+	int expanded_key_size = (key_size + 28) * 4;
+	int small_coef = key_size / 4;
+	int encryption_rounds = small_coef + 6;
+	int expanded_key_round = 0;
 	int multiplicationMatrix[16] = {0x0E, 0x0B, 0x0D, 0x09, 0x09, 0x0E, 0x0B, 0x0D, 0x0D, 0x09, 0x0E, 0x0B, 0x0B, 0x0D, 0x09, 0x0E};
 
 
@@ -519,14 +519,14 @@ int * decrypt(int state[], int expandedKey[], int keySize) {
 
 	//initial Add Round Key
 	for (i=0; i < 16; i++) {
-//		printf("%0x XOR %0x\n", state[i], expandedKey[expandedKeySize - (expandedKeyRound + 1) * 16 + i]);
-		state[i] = state[i] ^ expandedKey[expandedKeySize - (expandedKeyRound + 1) * 16 + i];
+//		printf("%0x XOR %0x\n", state[i], expanded_key[expanded_key_size - (expanded_key_round + 1) * 16 + i]);
+		state[i] = state[i] ^ expanded_key[expanded_key_size - (expanded_key_round + 1) * 16 + i];
 	}
-	expandedKeyRound++;
+	expanded_key_round++;
 
 	//print_value(state, 16);
 
-	for (i=0; i < encryptionRounds; i++) {
+	for (i=0; i < encryption_rounds; i++) {
 
 		p = shiftRow(state, 0);
 		for (j=0; j < 16; j++) {
@@ -543,13 +543,13 @@ int * decrypt(int state[], int expandedKey[], int keySize) {
 		//print_value(state, 16);
 
 		for (j=0; j < 16; j++) {
-			state[j] = state[j] ^ expandedKey[expandedKeySize - (expandedKeyRound + 1) * 16 + j];
+			state[j] = state[j] ^ expanded_key[expanded_key_size - (expanded_key_round + 1) * 16 + j];
 		}
-		expandedKeyRound++;
+		expanded_key_round++;
 
 		//print_value(state, 16);
 
-		if (i < encryptionRounds - 1) {
+		if (i < encryption_rounds - 1) {
 			p = mixColumn(state, multiplicationMatrix);
 			for (j=0; j < 16; j++) {
 				state[j] = *(p+j);
