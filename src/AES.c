@@ -25,7 +25,7 @@ int * rotWord(int input[], int shift_index) {
 		new_array[i] = input[j];
 	}
 	return new_array;
-};
+}
 
 int * subWord(int input[], int arr_length, int crypto_mode) {
 	unsigned char S[256] =
@@ -145,7 +145,7 @@ int * ek(int expanded_key[], int offset) {
 	}
 
 	return new_array;
-};
+}
 
 int * k(int key[], int offset) {
 	static int new_array[4];

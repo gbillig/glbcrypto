@@ -91,9 +91,11 @@ int main(void) {
 		state[i] = *(p+i);
 	}
 
-	printf("Decypted plaintext is:\n");
+	printf("Decrypted plaintext is:\n");
 	print_value(state, 16);
 	printf("\n");
+
+	SHA_test();
 
 	return 0;
 }
