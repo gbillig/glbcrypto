@@ -32,11 +32,43 @@ void SHA_test() {
 	//edge case: hashing a binary number whose length isn't a multiple of 8 bits (ignore for now)
 	char message[] = "abc";
 	uint64_t length = 24; //3 * 8 bits
-	rval = SHA256((int*) message, length);
+	rval = SHA256((uint8_t*) message, length);
 }
 
-int SHA256(char* message, uint64_t length) {
+int SHA256(uint8_t* message, uint64_t length) {
 
+	int i;
+	int num_blocks = ceil((double) length / (double) 512);
+	uint32_t** block = (uint32_t**) malloc(sizeof(uint32_t*) * num_blocks);
+	uint32_t* padded_msg;
+
+	padded_msg = SHA256_padding(message, length);
+
+	for (i=0; i<num_blocks; i++) {
+		//padded message consists of 512 bit sized blocks, split into groups of 32 bits.
+		//therefore, the start of each block is a multiple of 16 (16 * 32 = 512)
+		block[i] = padded_msg[i*16];
+	}
+
+	//result : M(i)_j = block[i][j]
+
+	uint32_t H1[4] = {0x6a, 0x09, 0xe6, 0x67};
+	uint32_t H2[4] = {0xbb, 0x67, 0xae, 0x85};
+	uint32_t H3[4] = {0x3c, 0x6e, 0xf3, 0x72};
+	uint32_t H4[4] = {0xa5, 0x4f, 0xf5, 0x3a};
+	uint32_t H5[4] = {0x51, 0x0e, 0x52, 0x7f};
+	uint32_t H6[4] = {0x9b, 0x05, 0x68, 0x8c};
+	uint32_t H7[4] = {0x1f, 0x83, 0xd9, 0xab};
+	uint32_t H8[4] = {0x5b, 0xe0, 0xcd, 0x19};
+
+	uint32_t a[4], b[4], c[4], d[4], e[4], f[4], g[4], h[4];
+
+
+
+	return 0;
+}
+
+uint32_t* SHA256_padding(uint8_t* message, uint64_t length) {
 	int i,j;
 
 	// length + 1 + k = 448 mod 512
@@ -48,7 +80,7 @@ int SHA256(char* message, uint64_t length) {
 
 	//512 bit blocks
 	int num_blocks = ceil((double) length / (double) 512);
-	int* padded_msg = (int*) malloc((sizeof(int) * 64) * num_blocks);
+	uint8_t* padded_msg = (uint8_t*) malloc((sizeof(uint8_t) * 64) * num_blocks);
 	int num_full_blocks = (num_blocks-1);
 	int last_block_length = length - num_full_blocks * 512;
 
@@ -68,11 +100,6 @@ int SHA256(char* message, uint64_t length) {
 		length_base256[8-num_digits + 7 - i] = quotient % 256;
 		quotient = quotient / 256;
 	}
-
-	for (i=0; i<8; i++) {
-		printf(BYTETOBINARYPATTERN" ", BYTETOBINARY(length_base256[i]));
-	}
-	printf("\n");
 
 
 	//section where padded message is the same as the original message
@@ -103,6 +130,9 @@ int SHA256(char* message, uint64_t length) {
 	for (i=0; i<num_blocks * 64; i++) {
 		printf(BYTETOBINARYPATTERN" ", BYTETOBINARY(padded_msg[i]));
 	}
+	printf("\n");
 
-	return 0;
+	return (uint32_t*) padded_msg;
 }
+
+
