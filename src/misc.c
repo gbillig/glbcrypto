@@ -7,8 +7,10 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
+#include "../inc/misc.h"
 
-void print_value(int* value, int length) {
+void print_value(uint8_t* value, int length) {
 	int i;
 
 	for (i=0; i<length; i++) {

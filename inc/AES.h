@@ -9,18 +9,18 @@
 #ifndef AES_H_
 #define AES_H_
 
-int * rotWord(int input[], int shift_index);
-int * subWord(int input[], int arr_length, int crypto_mode);
-int * rcon(int input);
-int * ek(int expanded_key[], int offset);
-int * k(int key[], int offset);
-int * shiftRow(int input[], int crypto_mode);
-int * mixColumn(int input[], int m_matrix[]);
+uint8_t * rotWord(uint8_t input[], int shift_index);
+uint8_t * subWord(uint8_t input[], int arr_length, int crypto_mode);
+uint8_t * rcon(int input);
+uint8_t * ek(uint8_t expanded_key[], int offset);
+uint8_t * k(uint8_t key[], int offset);
+uint8_t * shiftRow(uint8_t input[], int crypto_mode);
+uint8_t * mixColumn(uint8_t input[], uint8_t m_matrix[]);
 
 int functionTests(void);
 
-int * expandKey(int key_size, int key[]);
-int * encrypt(int state[], int expanded_key[], int key_size);
-int * decrypt(int state[], int expanded_key[], int key_size);
+uint8_t * expandKey(int key_size, uint8_t key[]);
+uint8_t * encrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
+uint8_t * decrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
 
 #endif /* AES_H_ */
