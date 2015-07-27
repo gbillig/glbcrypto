@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "../inc/AES.h"
+#include "../inc/aes.h"
 #include "../inc/misc.h"
 
 int main(void) {

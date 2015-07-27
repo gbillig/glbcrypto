@@ -1,6 +1,6 @@
 /*
  ============================================================================
- Name        : SHA.c
+ Name        : sha.c
  Author      : glb
  License     : MIT
  ============================================================================
@@ -10,7 +10,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <math.h>
-#include "../inc/SHA.h"
+#include "../inc/sha.h"
+#include "../inc/misc.h"
 
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
 #define BYTETOBINARY(byte)  \
@@ -47,7 +48,7 @@ int SHA256(uint8_t* message, uint64_t length) {
 	for (i=0; i<num_blocks; i++) {
 		//padded message consists of 512 bit sized blocks, split into groups of 32 bits.
 		//therefore, the start of each block is a multiple of 16 (16 * 32 = 512)
-		block[i] = padded_msg[i*16];
+		block[i] = padded_msg + i*16;
 	}
 
 	//result : M(i)_j = block[i][j]
@@ -63,7 +64,16 @@ int SHA256(uint8_t* message, uint64_t length) {
 
 	uint32_t a[4], b[4], c[4], d[4], e[4], f[4], g[4], h[4];
 
-
+	for (i=1; i<=num_blocks; i++) {
+		copy_array_32(H1, a, 4);
+		copy_array_32(H2, b, 4);
+		copy_array_32(H3, c, 4);
+		copy_array_32(H4, d, 4);
+		copy_array_32(H5, e, 4);
+		copy_array_32(H6, f, 4);
+		copy_array_32(H7, g, 4);
+		copy_array_32(H8, h, 4);
+	}
 
 	return 0;
 }
