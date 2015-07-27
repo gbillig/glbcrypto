@@ -34,6 +34,10 @@ void SHA_test() {
 	char message[] = "abc";
 	uint64_t length = 24; //3 * 8 bits
 	rval = SHA256((uint8_t*) message, length);
+
+	uint32_t a = 3;
+	a = bit_rotation(a, 2);
+	printf("a = %u\n", a);
 }
 
 int SHA256(uint8_t* message, uint64_t length) {
@@ -53,26 +57,26 @@ int SHA256(uint8_t* message, uint64_t length) {
 
 	//result : M(i)_j = block[i][j]
 
-	uint32_t H1[4] = {0x6a, 0x09, 0xe6, 0x67};
-	uint32_t H2[4] = {0xbb, 0x67, 0xae, 0x85};
-	uint32_t H3[4] = {0x3c, 0x6e, 0xf3, 0x72};
-	uint32_t H4[4] = {0xa5, 0x4f, 0xf5, 0x3a};
-	uint32_t H5[4] = {0x51, 0x0e, 0x52, 0x7f};
-	uint32_t H6[4] = {0x9b, 0x05, 0x68, 0x8c};
-	uint32_t H7[4] = {0x1f, 0x83, 0xd9, 0xab};
-	uint32_t H8[4] = {0x5b, 0xe0, 0xcd, 0x19};
+	uint32_t H1 = 0x6a09e667;
+	uint32_t H2 = 0xbb67ae85;
+	uint32_t H3 = 0x3c6ef372;
+	uint32_t H4 = 0xa54ff53a;
+	uint32_t H5 = 0x510e527f;
+	uint32_t H6 = 0x9b05688c;
+	uint32_t H7 = 0x1f83d9ab;
+	uint32_t H8 = 0x5be0cd19;
 
-	uint32_t a[4], b[4], c[4], d[4], e[4], f[4], g[4], h[4];
+	uint32_t a, b, c, d, e, f, g, h;
 
 	for (i=1; i<=num_blocks; i++) {
-		copy_array_32(H1, a, 4);
-		copy_array_32(H2, b, 4);
-		copy_array_32(H3, c, 4);
-		copy_array_32(H4, d, 4);
-		copy_array_32(H5, e, 4);
-		copy_array_32(H6, f, 4);
-		copy_array_32(H7, g, 4);
-		copy_array_32(H8, h, 4);
+		a = H1;
+		b = H2;
+		c = H3;
+		d = H4;
+		e = H5;
+		f = H6;
+		g = H7;
+		h = H8;
 	}
 
 	return 0;

@@ -9,14 +9,16 @@ bin/karabiner.o \
 bin/aes.o \
 bin/aes_helper.o \
 bin/misc.o \
-bin/sha.o
+bin/sha.o \
+bin/sha_helper.o
 
 SRC = \
 src/karabiner.c \
 src/aes.c \
 src/aes_helper.c \
 src/misc.c \
-src/sha.c
+src/sha.c \
+src/sha_helper.c
 
 INC = \
 inc/karabiner.h \
