@@ -8,19 +8,20 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "../inc/aes.h"
 #include "../inc/sha.h"
 
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z) {
 
-	uint32_t result = (x & y) + (~x & z);
+	uint32_t result = (x & y) ^ (~x & z);
 	return result;
 }
 
 uint32_t Maj(uint32_t x, uint32_t y, uint32_t z) {
 
-	uint32_t result = (x & y) + (x & z) + (y & z);
+	uint32_t result = (x & y) ^ (x & z) ^ (y & z);
 	return result;
 }
 
@@ -50,21 +51,36 @@ uint32_t bit_shift(uint32_t x, int shift) {
 }
 
 uint32_t big_sigma0(uint32_t x) {
-	uint32_t result = bit_rotation(x, 2) + bit_rotation(x, 13) + bit_rotation(x, 22);
+	uint32_t result = bit_rotation(x, 2) ^ bit_rotation(x, 13) ^ bit_rotation(x, 22);
 	return result;
 }
 
 uint32_t big_sigma1(uint32_t x) {
-	uint32_t result = bit_rotation(x, 6) + bit_rotation(x, 11) + bit_rotation(x, 25);
+	uint32_t result = bit_rotation(x, 6) ^ bit_rotation(x, 11) ^ bit_rotation(x, 25);
 	return result;
 }
 
 uint32_t small_sigma0(uint32_t x) {
-	uint32_t result = bit_rotation(x, 7) + bit_rotation(x, 18) + bit_shift(x, 3);
+	uint32_t result = bit_rotation(x, 7) ^ bit_rotation(x, 18) ^ bit_shift(x, 3);
 	return result;
 }
 
 uint32_t small_sigma1(uint32_t x) {
-	uint32_t result = bit_rotation(x, 17) + bit_rotation(x, 19) + bit_shift(x, 10);
+	uint32_t result = bit_rotation(x, 17) ^ bit_rotation(x, 19) ^ bit_shift(x, 10);
 	return result;
+}
+
+uint32_t* expanded_message(uint32_t* M) {
+	int i;
+	uint32_t* W = (uint32_t*) malloc(sizeof(uint32_t) * 64);
+
+	for (i=0; i<64; i++) {
+		if (i < 16) {
+			W[i] = M[i];
+		} else {
+			W[i] = small_sigma1(W[i-2]) + W[i-7] + small_sigma0(W[i-15]) + W[i-16];
+		}
+	}
+
+	return W;
 }

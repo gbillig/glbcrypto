@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 #include "../inc/aes.h"
+#include "../inc/sha.h"
 #include "../inc/misc.h"
 
 int main(void) {
@@ -72,7 +73,7 @@ int main(void) {
 	uint8_t state[16] = {0x8c, 0x37, 0x4b, 0xbd, 0x02, 0xd8, 0x3c, 0xc7, 0x4e, 0x89, 0x2e, 0xf7, 0x3e, 0xfe, 0x86, 0xea};
 
 	printf("\nOriginal plaintext is:\n");
-	print_value(state, 16);
+	print_value_8(state, 16);
 	printf("\n");
 
 	p = encrypt(state, expanded_key, key_size);
@@ -81,7 +82,7 @@ int main(void) {
 	}
 
 	printf("Ciphertext is:\n");
-	print_value(state, 16);
+	print_value_8(state, 16);
 	printf("\n");
 
 
@@ -93,7 +94,7 @@ int main(void) {
 	}
 
 	printf("Decrypted plaintext is:\n");
-	print_value(state, 16);
+	print_value_8(state, 16);
 	printf("\n");
 
 	SHA_test();
