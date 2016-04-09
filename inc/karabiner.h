@@ -6,7 +6,7 @@
  ============================================================================
  */
 
-#ifndef KARABINER_H_
-#define KARABINER_H_
+#ifndef INC_KARABINER_H_
+#define INC_KARABINER_H_
 
-#endif /* KARABINER_H_ */
+#endif /* INC_KARABINER_H_ */

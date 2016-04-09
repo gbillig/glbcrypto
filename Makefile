@@ -1,36 +1,31 @@
 CC = gcc
 CFLAGS = -Wall -g -c
 LD = gcc
-LDFLAGS = -g
-LDLIBS = -lm
+LDFLAGS = -g -static -L./lib
+LDLIBS = -lglbcrypto -lm
+AR = ar
+ARFLAGS = rcs
 
 OBJS = \
-bin/karabiner.o \
-bin/aes.o \
-bin/aes_helper.o \
 bin/misc.o \
-bin/sha.o \
-bin/sha_helper.o
-
-SRC = \
-src/karabiner.c \
-src/aes.c \
-src/aes_helper.c \
-src/misc.c \
-src/sha.c \
-src/sha_helper.c
-
-INC = \
-inc/karabiner.h \
-inc/aes.h \
-inc/misc.h \
-inc/sha.h
+bin/karabiner.o
 
 OUT = \
 bin/karabiner
 
+LIB_OBJS = \
+bin/misc.o \
+bin/aes_helper.o \
+bin/aes.o \
+bin/sha_helper.o \
+bin/sha.o 
+
+LIB_OUT = \
+lib/libglbcrypto.a
+
 # All Target
-all: $(OUT)
+all: $(LIB_OUT) $(OUT)
+	rm -f bin/*.o
 
 $(OUT): $(OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS) $(LDLIBS)
@@ -38,5 +33,8 @@ $(OUT): $(OBJS)
 bin/%.o: src/%.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+$(LIB_OUT): $(LIB_OBJS)
+	$(AR) $(ARFLAGS) $@ $(LIB_OBJS)
+
 clean:
-	rm -f bin/*.o bin/karabiner
+	rm -f bin/*.o bin/karabiner lib/libglbcrypto.a
