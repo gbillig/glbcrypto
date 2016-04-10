@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "../inc/aes_cipher.h"
 #include "../inc/misc.h"
@@ -91,13 +92,12 @@ int aes_testcase(void) {
 //KEY EXPANSION ALGORITHM
 //-----------------------
 
-uint8_t * aes_expand_key(int key_size, uint8_t key[]) {
+uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 
 	int i,j;
 	int expansion_rounds = key_size + 28;
 	int expanded_key_size = expansion_rounds * 4;
 	int small_coef = key_size / 4;
-	static uint8_t expanded_key[240];
 	uint8_t *t;
 	uint8_t t1Array[4];
 	uint8_t t2Array[4];
@@ -185,22 +185,23 @@ uint8_t * aes_expand_key(int key_size, uint8_t key[]) {
 	printf("\n");
 	 */
 
-	return expanded_key;
+	return 0;
 }
 
 //----------
 //ENCRYPTION
 //----------
 
-uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
+uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_key[], int key_size) {
 	int i,j;
 	int expanded_key_size = (key_size + 28) * 4;
 	int small_coef = key_size / 4;
 	int encryption_rounds = small_coef + 6;
 	int expanded_key_round = 0;
 	uint8_t multiplication_matrix[16] = {2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2, 3, 3, 1, 1, 2};
-
 	uint8_t *p;
+	uint8_t* state = malloc(sizeof(uint8_t) * 16);
+	memcpy(state, plaintext, sizeof(uint8_t) * 16);
 
 
 	//initial Add Round Key
@@ -244,14 +245,17 @@ uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 		//print_value(state, 16);
 	}
 
-	return state;
+	memcpy(ciphertext, state, sizeof(uint8_t) * 16);
+	free(state);
+
+	return 0;
 }
 
 //----------
 //DECRYPTION
 //----------
 
-uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
+uint8_t aes_decrypt(uint8_t plaintext[], uint8_t ciphertext[], uint8_t expanded_key[], int key_size) {
 
 	int i,j;
 	int expanded_key_size = (key_size + 28) * 4;
@@ -259,8 +263,9 @@ uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 	int encryption_rounds = small_coef + 6;
 	int expanded_key_round = 0;
 	uint8_t multiplicationMatrix[16] = {0x0E, 0x0B, 0x0D, 0x09, 0x09, 0x0E, 0x0B, 0x0D, 0x0D, 0x09, 0x0E, 0x0B, 0x0B, 0x0D, 0x09, 0x0E};
-
 	uint8_t *p;
+	uint8_t* state = malloc(sizeof(uint8_t) * 16);
+	memcpy(state, ciphertext, sizeof(uint8_t) * 16);
 
 	//initial Add Round Key
 	for (i=0; i < 16; i++) {
@@ -304,5 +309,8 @@ uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 		}
 	}
 
-	return state;
+	memcpy(plaintext, state, sizeof(uint8_t) * 16);
+	free(state);
+
+	return 0;
 }

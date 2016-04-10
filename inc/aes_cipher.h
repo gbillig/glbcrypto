@@ -19,8 +19,8 @@ uint8_t * mixColumn(uint8_t input[], uint8_t m_matrix[]);
 
 int aes_testcase(void);
 
-uint8_t * aes_expand_key(int key_size, uint8_t key[]);
-uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
-uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
+uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size);
+uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_key[], int key_size);
+uint8_t aes_decrypt(uint8_t plaintext[], uint8_t ciphertext[], uint8_t expanded_key[], int key_size);
 
 #endif /* INC_AES_CIPHER_H_ */

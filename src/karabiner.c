@@ -64,7 +64,6 @@ int main(void) {
 	uint8_t* ciphertext = malloc(sizeof(uint8_t) * 16);
 
 	int key_size = 16;
-	int expanded_key_size = (key_size + 28) * 4;
 
 	printf("\nOriginal plaintext is:\n");
 	print_value_8(plaintext, 16);
@@ -79,9 +78,6 @@ int main(void) {
 	print_value_8(ciphertext, 16);
 	printf("\n");
 
-
-	int cipher[16] = {0x24, 0x09, 0x80, 0xea, 0x06, 0x4c, 0x51, 0xd3, 0x77, 0x11, 0xd5, 0x81, 0xa2, 0x3e, 0xbc, 0x83};
-
 	rval = aes_128(plaintext, ciphertext, key, key_size, 1);
 	if (rval == 1) {
 		return 1;
@@ -90,6 +86,8 @@ int main(void) {
 	printf("Decrypted plaintext is:\n");
 	print_value_8(plaintext, 16);
 	printf("\n");
+
+	free(ciphertext);
 
 	sha_testcase();
 
