@@ -17,6 +17,7 @@ LIB_OBJS = \
 bin/misc.o \
 bin/aes_helper.o \
 bin/aes_cipher.o \
+bin/aes_family.o \
 bin/sha_helper.o \
 bin/sha.o 
 

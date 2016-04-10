@@ -177,11 +177,13 @@ uint8_t * aes_expand_key(int key_size, uint8_t key[]) {
 		}
 	}
 
+	/*
 	printf("Expanded Key:\n");
 	for(i=0; i<expanded_key_size; i++) {
 		printf("%02x ", expanded_key[i]);
 	}
 	printf("\n");
+	 */
 
 	return expanded_key;
 }
@@ -197,7 +199,6 @@ uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 	int encryption_rounds = small_coef + 6;
 	int expanded_key_round = 0;
 	uint8_t multiplication_matrix[16] = {2, 3, 1, 1, 1, 2, 3, 1, 1, 1, 2, 3, 3, 1, 1, 2};
-
 
 	uint8_t *p;
 
@@ -258,7 +259,6 @@ uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 	int encryption_rounds = small_coef + 6;
 	int expanded_key_round = 0;
 	uint8_t multiplicationMatrix[16] = {0x0E, 0x0B, 0x0D, 0x09, 0x09, 0x0E, 0x0B, 0x0D, 0x0D, 0x09, 0x0E, 0x0B, 0x0B, 0x0D, 0x09, 0x0E};
-
 
 	uint8_t *p;
 
