@@ -18,16 +18,6 @@ uint8_t aes(uint8_t* output_msg, uint8_t* input_msg, uint8_t key[], int key_size
 	uint8_t *p;
 	uint8_t expanded_key[240];
 
-	if (mode != 0 && mode != 1) {
-		printf("aes_128 failed: invalid mode!\n");
-		return EXIT_FAILURE;
-	}
-
-	if (key_size != 16) {
-		printf("aes_128 failed: wrong key size!\n");
-		return EXIT_FAILURE;
-	}
-
 	expanded_key_size = (key_size + 28) * 4;
 	p = aes_expand_key(key_size, key);
 
