@@ -17,10 +17,10 @@ uint8_t * k(uint8_t key[], int offset);
 uint8_t * shiftRow(uint8_t input[], int crypto_mode);
 uint8_t * mixColumn(uint8_t input[], uint8_t m_matrix[]);
 
-int functionTests(void);
+int aes_testcase(void);
 
-uint8_t * expandKey(int key_size, uint8_t key[]);
-uint8_t * encrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
-uint8_t * decrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
+uint8_t * aes_expand_key(int key_size, uint8_t key[]);
+uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
+uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size);
 
 #endif /* INC_AES_H_ */

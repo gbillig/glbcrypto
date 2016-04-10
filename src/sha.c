@@ -37,7 +37,7 @@ const uint32_t K[64] = {
 		0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 };
 
-void SHA_test() {
+void sha_testcase() {
 
 	int rval;
 
@@ -50,14 +50,14 @@ void SHA_test() {
 	uint64_t length = strlen(message) * 8; //3 * 8 bits
 
 	printf("SHA256 Test\nInput:\n%s\n", message);
-	uint32_t* hash = SHA256((uint8_t*) message, length);
+	uint32_t* hash = sha_256_hash((uint8_t*) message, length);
 
 	printf("Output:\n");
 	print_value_32(hash, 8);
 	free(hash);
 }
 
-uint32_t* SHA256(uint8_t* message, uint64_t length) {
+uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
 
 	int i,j;
 
@@ -72,7 +72,7 @@ uint32_t* SHA256(uint8_t* message, uint64_t length) {
 	uint32_t** block = (uint32_t**) malloc(sizeof(uint32_t*) * num_blocks);
 	uint32_t* padded_msg;
 
-	padded_msg = SHA256_padding(message, length, k);
+	padded_msg = sha_256_pad_message(message, length, k);
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
@@ -158,7 +158,7 @@ uint32_t* SHA256(uint8_t* message, uint64_t length) {
 	return hash;
 }
 
-uint32_t* SHA256_padding(uint8_t* message, uint64_t length, int k) {
+uint32_t* sha_256_pad_message(uint8_t* message, uint64_t length, int k) {
 	int i,j;
 
 	//512 bit blocks

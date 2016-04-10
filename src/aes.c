@@ -19,7 +19,7 @@
 //TEST FOR BASE FUNCTIONS
 //-----------------------
 
-int functionTests(void) {
+int aes_testcase(void) {
 
 	int i;
 	uint8_t testArray[4] = {0xAA, 0x45, 0xB9, 0xF0};
@@ -91,7 +91,7 @@ int functionTests(void) {
 //KEY EXPANSION ALGORITHM
 //-----------------------
 
-uint8_t * expandKey(int key_size, uint8_t key[]) {
+uint8_t * aes_expand_key(int key_size, uint8_t key[]) {
 
 	int i,j;
 	int expansion_rounds = key_size + 28;
@@ -190,7 +190,7 @@ uint8_t * expandKey(int key_size, uint8_t key[]) {
 //ENCRYPTION
 //----------
 
-uint8_t * encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
+uint8_t * aes_encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 	int i,j;
 	int expanded_key_size = (key_size + 28) * 4;
 	int small_coef = key_size / 4;
@@ -250,7 +250,7 @@ uint8_t * encrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 //DECRYPTION
 //----------
 
-uint8_t * decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
+uint8_t * aes_decrypt(uint8_t state[], uint8_t expanded_key[], int key_size) {
 
 	int i,j;
 	int expanded_key_size = (key_size + 28) * 4;

@@ -63,7 +63,7 @@ int main(void) {
 
 	int key_size = 16;
 	int expanded_key_size = (key_size + 28) * 4;
-	p = expandKey(key_size, key);
+	p = aes_expand_key(key_size, key);
 
 	for (i=0; i<expanded_key_size; i++) {
 		expanded_key[i] = *(p+i);
@@ -76,7 +76,7 @@ int main(void) {
 	print_value_8(state, 16);
 	printf("\n");
 
-	p = encrypt(state, expanded_key, key_size);
+	p = aes_encrypt(state, expanded_key, key_size);
 	for (i=0; i<16; i++) {
 		state[i] = *(p+i);
 	}
@@ -88,7 +88,7 @@ int main(void) {
 
 	int cipher[16] = {0x24, 0x09, 0x80, 0xea, 0x06, 0x4c, 0x51, 0xd3, 0x77, 0x11, 0xd5, 0x81, 0xa2, 0x3e, 0xbc, 0x83};
 
-	p = decrypt(state, expanded_key, key_size);
+	p = aes_decrypt(state, expanded_key, key_size);
 	for (i=0; i<16; i++) {
 		state[i] = *(p+i);
 	}
@@ -97,7 +97,7 @@ int main(void) {
 	print_value_8(state, 16);
 	printf("\n");
 
-	SHA_test();
+	sha_testcase();
 
 	return 0;
 }
