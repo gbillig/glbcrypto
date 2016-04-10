@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "../inc/aes.h"
+#include "../inc/aes_cipher.h"
 #include "../inc/sha.h"
 
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z) {

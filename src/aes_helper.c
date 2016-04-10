@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "../inc/aes.h"
+#include "../inc/aes_cipher.h"
 
 
 //shiftIndex: positive is to the left
