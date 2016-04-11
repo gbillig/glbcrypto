@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "../inc/aes_cipher.h"
 #include "../inc/misc.h"
+#include "../inc/mode_of_operation.h"
 
 int aes(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size, int mode) {
 	uint8_t* expanded_key = malloc(sizeof(uint8_t) * 240);
@@ -80,17 +81,41 @@ int aes_256(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size,
 }
 
 int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode) {
-	int i;
+	int i,j;
 	if (msg_size % 16 != 0) {
 		printf("aes_128_cbc failed: invalid message size!\n");
 		return EXIT_FAILURE;
 	}
 
-	uint8_t* iv = malloc(sizeof(uint8_t) * 16);
+	//uint8_t* iv = malloc(sizeof(uint8_t) * 16);
+	uint8_t* in_state = malloc(sizeof(uint8_t) * 16);
+	uint8_t* out_state = malloc(sizeof(uint8_t) * 16);
 
-	for (i = 0; i < msg_size; i += 16) {
+	int (*aes_128_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_128;
 
+	//get_random(iv, 16);
+
+	uint8_t* iv = (uint8_t[16]) {0x8c, 0xe8, 0x2e, 0xef, 0xbe, 0xa0, 0xda, 0x3c, 0x44, 0x69, 0x9e, 0xd7, 0xdb, 0x51, 0xb7, 0xd9};
+
+	for (i = 0; i*16 < msg_size; i++) {
+
+		for (j = 0; j < 16; j++) {
+			in_state[j] = input_msg[i * 16 + j];
+			if (i != 0) {
+				iv[j] = output_msg[(i-1) * 16 + j];
+			}
+		}
+
+		cbc(out_state, in_state, iv, key, key_size, mode, aes_128_pointer);
+
+		for (j = 0; j < 16; j++) {
+			output_msg[i * 16 + j] = out_state[j];
+		}
 	}
+
+	//free(iv);
+	free(in_state);
+	free(out_state);
 
 	return 0;
 }
