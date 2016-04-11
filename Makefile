@@ -15,6 +15,7 @@ bin/karabiner
 
 LIB_OBJS = \
 bin/misc.o \
+bin/mode_of_operation.o \
 bin/aes_helper.o \
 bin/aes_cipher.o \
 bin/aes_family.o \
