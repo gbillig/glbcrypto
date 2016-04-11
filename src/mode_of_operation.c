@@ -19,7 +19,7 @@ int cbc(uint8_t* output, uint8_t* input, uint8_t* iv, uint8_t* key, int key_size
 
 
 	for (i = 0; i < 16; i++) {
-		if (mode) {
+		if (mode == 0) {
 			in_state[i] = input[i] ^ iv[i];
 		} else {
 			in_state[i] = input[i];
@@ -29,7 +29,7 @@ int cbc(uint8_t* output, uint8_t* input, uint8_t* iv, uint8_t* key, int key_size
 	(*cipher)(out_state, in_state, key, key_size, mode);
 
 	for (i = 0; i < 16; i++) {
-		if (mode) {
+		if (mode == 0) {
 			output[i] = out_state[i];
 		} else {
 			output[i] = out_state[i] ^ iv[i];
