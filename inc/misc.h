@@ -14,5 +14,7 @@ void print_value_32(uint32_t* value, int length);
 void copy_array_8(uint8_t* src, uint8_t* dst, int length);
 void copy_array_32(uint32_t* src, uint32_t* dst, int length);
 
+void get_random(uint8_t* output, int size);
+
 
 #endif /* INC_MISC_H_ */

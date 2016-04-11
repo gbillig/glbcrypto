@@ -41,3 +41,11 @@ void copy_array_32(uint32_t* src, uint32_t* dst, int length) {
 		dst[i] = src[i];
 	}
 }
+
+void get_random(uint8_t* output, int size) {
+	FILE* random_data = fopen("/dev/random", "rb");
+
+	fread(output, sizeof(uint8_t), size, random_data);
+	fclose(random_data);
+}
+
