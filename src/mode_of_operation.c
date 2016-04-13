@@ -17,7 +17,6 @@ int cbc(uint8_t* output, uint8_t* input, uint8_t* iv, uint8_t* key, int key_size
 	uint8_t* in_state = malloc(sizeof(uint8_t) * 16);
 	uint8_t* out_state = malloc(sizeof(uint8_t) * 16);
 
-
 	for (i = 0; i < 16; i++) {
 		if (mode == 0) {
 			in_state[i] = input[i] ^ iv[i];

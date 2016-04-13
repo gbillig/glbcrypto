@@ -120,6 +120,12 @@ int main(void) {
 	print_value_8(ciphertext, msg_size);
 	printf("\n");
 
+	aes_128_cbc(plaintext, ciphertext, msg_size, iv, key, key_size, 1);
+
+	printf("Decrypted plaintext is:\n");
+	print_value_8(plaintext, msg_size);
+	printf("\n");
+
 	free(ciphertext);
 
 	//---------------
