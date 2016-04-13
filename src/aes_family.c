@@ -80,22 +80,21 @@ int aes_256(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size,
 	return rval;
 }
 
-int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode) {
+int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode) {
 	int i,j;
 	if (msg_size % 16 != 0) {
 		printf("aes_128_cbc failed: invalid message size!\n");
 		return EXIT_FAILURE;
 	}
 
-	//uint8_t* iv = malloc(sizeof(uint8_t) * 16);
+	if (iv == NULL) {
+		get_random(iv, 16);
+	}
+
 	uint8_t* in_state = malloc(sizeof(uint8_t) * 16);
 	uint8_t* out_state = malloc(sizeof(uint8_t) * 16);
 
 	int (*aes_128_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_128;
-
-	//get_random(iv, 16);
-
-	uint8_t* iv = (uint8_t[16]) {0x8c, 0xe8, 0x2e, 0xef, 0xbe, 0xa0, 0xda, 0x3c, 0x44, 0x69, 0x9e, 0xd7, 0xdb, 0x51, 0xb7, 0xd9};
 
 	for (i = 0; i*16 < msg_size; i++) {
 
@@ -113,7 +112,6 @@ int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 		}
 	}
 
-	//free(iv);
 	free(in_state);
 	free(out_state);
 
