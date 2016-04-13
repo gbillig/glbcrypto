@@ -183,7 +183,7 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 		printf("%02x ", expanded_key[i]);
 	}
 	printf("\n");
-	 */
+	*/
 
 	return 0;
 }
@@ -210,7 +210,7 @@ uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_
 	}
 	expanded_key_round++;
 
-	//print_value(state, 16);
+	//print_value_8(state, 16);
 
 	for (i=0; i < encryption_rounds; i++) {
 
@@ -219,14 +219,14 @@ uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_
 			state[j] = *(p+j);
 		}
 
-		//print_value(state, 16);
+		//print_value_8(state, 16);
 
 		p = shiftRow(state, 1);
 		for (j=0; j < 16; j++) {
 			state[j] = *(p+j);
 		}
 
-		//print_value(state, 16);
+		//print_value_8(state, 16);
 
 		if (i != encryption_rounds - 1) {
 			p = mixColumn(state, multiplication_matrix);
@@ -234,7 +234,7 @@ uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_
 				state[j] = *(p+j);
 			}
 
-			//print_value(state, 16);
+			//print_value_8(state, 16);
 		}
 
 		for (j=0; j < 16; j++) {
@@ -242,7 +242,7 @@ uint8_t aes_encrypt(uint8_t ciphertext[], uint8_t plaintext[], uint8_t expanded_
 		}
 		expanded_key_round++;
 
-		//print_value(state, 16);
+		//print_value_8(state, 16);
 	}
 
 	memcpy(ciphertext, state, sizeof(uint8_t) * 16);

@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "../inc/aes_cipher.h"
 
@@ -245,25 +246,44 @@ uint8_t * mixColumn(uint8_t input[], uint8_t m_matrix[]) {
 	};
 
 	static uint8_t new_array[16];
-	int i;
+	int i,j;
 	int column_num, row_num;
+	uint8_t* t = malloc(sizeof(uint8_t) * 4);
 
 	for (i=0;i<16;i++) {
 		column_num = i/4;
 		row_num = i%4;
-		new_array[i] =
-				E[ (L[ input[ column_num * 4 + 0]] + L[ m_matrix[ row_num * 4 + 0]]) % 255] ^
-				E[ (L[ input[ column_num * 4 + 1]] + L[ m_matrix[ row_num * 4 + 1]]) % 255] ^
-				E[ (L[ input[ column_num * 4 + 2]] + L[ m_matrix[ row_num * 4 + 2]]) % 255] ^
-				E[ (L[ input[ column_num * 4 + 3]] + L[ m_matrix[ row_num * 4 + 3]]) % 255];
 
-		//printf("b%d = b%d * %d XOR b%d * %d XOR b%d * %d XOR b%d * %d\n", i, columnNum * 4 + 0, rowNum * 4 + 0, columnNum * 4 + 1, rowNum * 4 + 1, columnNum * 4 + 2, rowNum * 4 + 2, columnNum * 4 + 3, rowNum * 4 + 3);
-		//printf("E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x))\n", input[ columnNum * 4 + 0], mMatrix[ rowNum * 4 + 0], input[ columnNum * 4 + 1], mMatrix[ rowNum * 4 + 1], input[ columnNum * 4 + 2], mMatrix[ rowNum * 4 + 2], input[ columnNum * 4 + 3], mMatrix[ rowNum * 4 + 3]);
-		//printf("E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x)\n", L[ input[ columnNum * 4 + 0]], L[ mMatrix[ rowNum * 4 + 0]], L[ input[ columnNum * 4 + 1]], L[ mMatrix[ rowNum * 4 + 1]], L[ input[ columnNum * 4 + 2]], L[ mMatrix[ rowNum * 4 + 2]], L[ input[ columnNum * 4 + 3]], L[ mMatrix[ rowNum * 4 + 3]]);
-		//printf("E(%0x) ^ E(%0x) ^ E(%0x) ^ E(%0x)\n", (L[ input[ columnNum * 4 + 0]] + L[ mMatrix[ rowNum * 4 + 0]]) % 255, (L[ input[ columnNum * 4 + 1]] + L[ mMatrix[ rowNum * 4 + 1]]) % 255, (L[ input[ columnNum * 4 + 2]] + L[ mMatrix[ rowNum * 4 + 2]]) % 255, (L[ input[ columnNum * 4 + 3]] + L[ mMatrix[ rowNum * 4 + 3]]) % 255);
-		//printf("%0x ^ %0x ^ %0x ^ %0x\n", E[ (L[ input[ columnNum * 4 + 0]] + L[ mMatrix[ rowNum * 4 + 0]]) % 255],	E[ (L[ input[ columnNum * 4 + 1]] + L[ mMatrix[ rowNum * 4 + 1]]) % 255], E[ (L[ input[ columnNum * 4 + 2]] + L[ mMatrix[ rowNum * 4 + 2]]) % 255], E[ (L[ input[ columnNum * 4 + 3]] + L[ mMatrix[ rowNum * 4 + 3]]) % 255]);
+		for (j = 0; j < 4; j++) {
+			// if input byte is 0, then the multiplication result is also 0
+			if (input[ column_num * 4 + j] == 0) {
+				t[j] = 0;
+			}
+			// if the matrix byte is 1, then the result is equal to the input byte
+			else if (m_matrix[ row_num * 4 + j] == 1) {
+				t[j] = input[ column_num * 4 + j];
+			}
+			// if the input byte is 1, then the result is equal to the matrix byte
+			else if (input[ column_num * 4 + j] == 1) {
+				t[j] = m_matrix[ row_num * 4 + j];
+			}
+			// else, calculate the matrix multiplication using Galois fields
+			else {
+				t[j] = E[ (L[ input[ column_num * 4 + j]] + L[ m_matrix[ row_num * 4 + j]]) % 255];
+			}
+		}
+
+		new_array[i] = t[0] ^ t[1] ^ t[2] ^ t[3];
+
+		//printf("b%d = b%d * %d XOR b%d * %d XOR b%d * %d XOR b%d * %d\n", i, column_num * 4 + 0, row_num * 4 + 0, column_num * 4 + 1, row_num * 4 + 1, column_num * 4 + 2, row_num * 4 + 2, column_num * 4 + 3, row_num * 4 + 3);
+		//printf("E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x)) ^ E(L(%0x) + L(%0x))\n", input[ column_num * 4 + 0], m_matrix[ row_num * 4 + 0], input[ column_num * 4 + 1], m_matrix[ row_num * 4 + 1], input[ column_num * 4 + 2], m_matrix[ row_num * 4 + 2], input[ column_num * 4 + 3], m_matrix[ row_num * 4 + 3]);
+		//printf("E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x) ^ E(%0x + %0x)\n", L[ input[ column_num * 4 + 0]], L[ m_matrix[ row_num * 4 + 0]], L[ input[ column_num * 4 + 1]], L[ m_matrix[ row_num * 4 + 1]], L[ input[ column_num * 4 + 2]], L[ m_matrix[ row_num * 4 + 2]], L[ input[ column_num * 4 + 3]], L[ m_matrix[ row_num * 4 + 3]]);
+		//printf("E(%0x) ^ E(%0x) ^ E(%0x) ^ E(%0x)\n", (L[ input[ column_num * 4 + 0]] + L[ m_matrix[ row_num * 4 + 0]]) % 255, (L[ input[ column_num * 4 + 1]] + L[ m_matrix[ row_num * 4 + 1]]) % 255, (L[ input[ column_num * 4 + 2]] + L[ m_matrix[ row_num * 4 + 2]]) % 255, (L[ input[ column_num * 4 + 3]] + L[ m_matrix[ row_num * 4 + 3]]) % 255);
+		//printf("%0x ^ %0x ^ %0x ^ %0x\n", E[ (L[ input[ column_num * 4 + 0]] + L[ m_matrix[ row_num * 4 + 0]]) % 255],	E[ (L[ input[ column_num * 4 + 1]] + L[ m_matrix[ row_num * 4 + 1]]) % 255], E[ (L[ input[ column_num * 4 + 2]] + L[ m_matrix[ row_num * 4 + 2]]) % 255], E[ (L[ input[ column_num * 4 + 3]] + L[ m_matrix[ row_num * 4 + 3]]) % 255]);
 		//printf("%0x\n", new_array[i]);
 	}
+
+	free(t);
 
 	return new_array;
 }
