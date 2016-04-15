@@ -91,39 +91,9 @@ int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 		get_random(iv, 16);
 	}
 
-	uint8_t* in_state = malloc(sizeof(uint8_t) * 16);
-	uint8_t* out_state = malloc(sizeof(uint8_t) * 16);
-	uint8_t* iv_state = malloc(sizeof(uint8_t) * 16);
-
-	for (i = 0; i < 16; i++) {
-		iv_state[i] = iv[i];
-	}
-
 	int (*aes_128_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_128;
 
-	for (i = 0; i*16 < msg_size; i++) {
-
-		for (j = 0; j < 16; j++) {
-			in_state[j] = input_msg[i * 16 + j];
-			if (i != 0) {
-				if (mode == 0) {
-					iv_state[j] = output_msg[(i-1) * 16 + j];
-				} else {
-					iv_state[j] = input_msg[(i-1) * 16 + j];
-				}
-			}
-		}
-
-		cbc(out_state, in_state, iv_state, key, key_size, mode, aes_128_pointer);
-
-		for (j = 0; j < 16; j++) {
-			output_msg[i * 16 + j] = out_state[j];
-		}
-	}
-
-	free(in_state);
-	free(out_state);
-	free(iv_state);
+	cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_128_pointer);
 
 	return 0;
 }
