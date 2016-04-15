@@ -54,7 +54,7 @@ int aes_192(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size,
 		return EXIT_FAILURE;
 	}
 
-	if (key_size != 16) {
+	if (key_size != 24) {
 		printf("aes_192 failed: wrong key size!\n");
 		return EXIT_FAILURE;
 	}
@@ -71,7 +71,7 @@ int aes_256(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size,
 		return EXIT_FAILURE;
 	}
 
-	if (key_size != 16) {
+	if (key_size != 32) {
 		printf("aes_256 failed: wrong key size!\n");
 		return EXIT_FAILURE;
 	}
@@ -81,7 +81,6 @@ int aes_256(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size,
 }
 
 int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode) {
-	int i,j;
 	if (msg_size % 16 != 0) {
 		printf("aes_128_cbc failed: invalid message size!\n");
 		return EXIT_FAILURE;
@@ -94,6 +93,40 @@ int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 	int (*aes_128_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_128;
 
 	cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_128_pointer);
+
+	return 0;
+}
+
+int aes_192_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode) {
+	if (msg_size % 16 != 0) {
+		printf("aes_192_cbc failed: invalid message size!\n");
+		return EXIT_FAILURE;
+	}
+
+	if (iv == NULL) {
+		get_random(iv, 16);
+	}
+
+	int (*aes_192_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_192;
+
+	cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_192_pointer);
+
+	return 0;
+}
+
+int aes_256_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode) {
+	if (msg_size % 16 != 0) {
+		printf("aes_256_cbc failed: invalid message size!\n");
+		return EXIT_FAILURE;
+	}
+
+	if (iv == NULL) {
+		get_random(iv, 16);
+	}
+
+	int (*aes_256_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_256;
+
+	cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_256_pointer);
 
 	return 0;
 }
