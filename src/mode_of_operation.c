@@ -33,9 +33,7 @@ int cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint
 					iv_state[j] = input_msg[(i-1) * 16 + j];
 				}
 			}
-		}
 
-		for (j = 0; j < 16; j++) {
 			if (mode == 0) {
 				in_state[j] = in_state[j] ^ iv_state[j];
 			}
@@ -45,12 +43,10 @@ int cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint
 
 		for (j = 0; j < 16; j++) {
 			if (mode == 1) {
-				out_state[j] = out_state[j] ^ iv_state[j];
+				output_msg[i * 16 + j] = out_state[j] ^ iv_state[j];
+			} else {
+				output_msg[i * 16 + j] = out_state[j];
 			}
-		}
-
-		for (j = 0; j < 16; j++) {
-			output_msg[i * 16 + j] = out_state[j];
 		}
 	}
 
