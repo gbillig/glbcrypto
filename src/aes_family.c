@@ -115,6 +115,8 @@ int aes_192_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 }
 
 int aes_256_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode) {
+	int rval;
+
 	if (msg_size % 16 != 0) {
 		printf("aes_256_cbc failed: invalid message size!\n");
 		return EXIT_FAILURE;
@@ -126,7 +128,7 @@ int aes_256_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 
 	int (*aes_256_pointer)(uint8_t*, uint8_t*, uint8_t*, int, int) = &aes_256;
 
-	cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_256_pointer);
+	rval = cbc(output_msg, input_msg, msg_size, iv, key, key_size, mode, aes_256_pointer);
 
-	return 0;
+	return rval;
 }
