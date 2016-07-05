@@ -49,8 +49,21 @@ void sha_testcase() {
 	//char message[] = "abc";
 	uint64_t length = strlen(message) * 8; //3 * 8 bits
 
-	printf("SHA256 Test\nInput:\n%s\n", message);
+	printf("SHA256 Test 1\nInput:\n%s\n", message);
 	uint32_t* hash = sha_256_hash((uint8_t*) message, length);
+
+	printf("Output:\n");
+	print_value_32(hash, 8);
+	free(hash);
+
+	// 1421 = 0b10110001101 (11 bits)
+	// QUESTION: is the data encoded {10110001, 00000101} or {10110001, 10100000} ?
+	// Currently, the implementation uses the first option.
+	uint8_t message2[] = {177, 5};
+	length = 11; //11 bits
+
+	printf("SHA256 Test 2\nInput:\n%d\n", message2[0]);
+	hash = sha_256_hash((uint8_t*) message2, length);
 
 	printf("Output:\n");
 	print_value_32(hash, 8);
@@ -158,66 +171,73 @@ uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
 	return hash;
 }
 
-uint32_t* sha_256_pad_message(uint8_t* message, uint64_t length, int k) {
+// I really don't like this code. It should be rethought and refactored
+// SOLUTION: use bit manipulation?
+uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 	int i,j;
 
 	//512 bit blocks
-	int num_blocks = ceil((double) (length + 1 + k) / (double) 512);
-	uint8_t* padded_msg = (uint8_t*) malloc((sizeof(uint8_t) * 64) * num_blocks);
-	int num_full_blocks = (num_blocks-1);
-	int last_block_length = length - num_full_blocks * 512;
+	int padded_msg_length = msg_length + 1 + k + 64;
+	int num_blocks = padded_msg_length / 512;
 
-	//conversion from base 10 to base 256 (2^8)
+	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
+
+	//message gets split into groups of 8 bits fit into the padded_msg array
+	for (i = 0; i < msg_length / 8; i++) {
+		padded_msg[i] = message[i];
+	}
+
+	int num_padding_zeroes = k;
+	int msg_remainder_by_eight = msg_length % 8;
+
+	//if input isn't a multiple of 8 bits
+	if (msg_remainder_by_eight != 0) {
+		//message mask is the remainder number of leading 1s followed by zeroes
+		//example for remainder 3: 0b11100000
+		uint8_t message_mask = ((1 << msg_remainder_by_eight) - 1) << (8 - msg_remainder_by_eight);
+
+		//shift message to align the value with the MSB (left side)
+		uint8_t msg_section = (message[i] << (8-msg_remainder_by_eight)) & message_mask;
+
+		//append the "1" and complete the 8-bit value with zeroes
+		padded_msg[i] = msg_section | (1 << (7-msg_remainder_by_eight));
+		num_padding_zeroes -= 7 - msg_remainder_by_eight;
+	} else {
+		//0x80 = 0b10000000
+		padded_msg[i] = 0x80;
+		num_padding_zeroes -= 7;
+	}
+
+	for (i = i + 1; num_padding_zeroes > 0; num_padding_zeroes -= 8, i++ ) {
+		padded_msg[i] = 0;
+	}
+
+	//converting msg_length from base 10 to base 256 (2^8) to fit 8-bit groups
 	int num_digits = 1;
-	uint64_t quotient = length / 256;
+	uint64_t quotient = msg_length / 256;
 	while (quotient > 0) {
 		quotient = quotient / 256;
 		num_digits++;
 	}
 
-	int length_base256[8] = {0};
-	quotient = length;
-	for (i=8-num_digits; i<8; i++) {
+	int msg_length_base256[8] = {0};
+	quotient = msg_length;
+	for (j = 8 - num_digits; j < 8; j++) {
 		//index = start_index (8-num_digits) + end_index (7) - current index (i)
 		//this reverses the list we iterate over
-		length_base256[8-num_digits + 7 - i] = quotient % 256;
+		msg_length_base256[8 - num_digits + 7 - j] = quotient % 256;
 		quotient = quotient / 256;
 	}
 
-
-	//section where padded message is the same as the original message
-	int interval_1 = num_full_blocks * 512 / 8 + last_block_length / 8;
-	//section where 0b10000000 is appended
-	int interval_2 = interval_1 + 1;
-	//section where zeroes are appended
-	int interval_3 = interval_2 + ((k - 7) / 8);
-	//section where length in binary is appended
-	int interval_4 = interval_3 + 8;
-
-
-	int counter = 0;
-	for (i=0; i<num_blocks * 64; i++) {
-		if (i < interval_1) {
-			padded_msg[i] = message[i];
-		} else if (i < interval_2) {
-			//0x80 = 0b10000000
-			padded_msg[i] = 0x80;
-		} else if (i < interval_3) {
-			padded_msg[i] = 0;
-		} else if (i < interval_4) {
-			padded_msg[i] = length_base256[counter];
-			counter++;
-		}
+	for (j = 0; j < 8; i++, j++) {
+		padded_msg[i] = msg_length_base256[j];
 	}
 
-	/*
 	for (i=0; i<num_blocks * 64; i++) {
 		printf(BYTETOBINARYPATTERN" ", BYTETOBINARY(padded_msg[i]));
 	}
 	printf("\n");
-	*/
+
 
 	return (uint32_t*) padded_msg;
 }
-
-

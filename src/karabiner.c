@@ -21,7 +21,7 @@ int main(void) {
 
 	setvbuf(stdout, NULL, _IONBF, 0);
 
-	int i, rval;
+	int rval;
 
 	//
 	//functionTests();
@@ -51,9 +51,6 @@ int main(void) {
 	}
 	printf("\n");
 	*/
-
-
-	uint8_t* p;
 
 	uint8_t* key = malloc(sizeof(uint8_t) * 16);
 	key = (uint8_t[16]) {0x0f, 0x15, 0x71, 0xc9, 0x47, 0xd9, 0xe8, 0x59, 0x0c, 0xb7, 0xad, 0xd6, 0xaf, 0x7f, 0x67, 0x98};
@@ -97,7 +94,12 @@ int main(void) {
 
 	//---------------
 
-	key = (uint8_t[16]) {0x56, 0xe4, 0x7a, 0x38, 0xc5, 0x59, 0x89, 0x74, 0xbc, 0x46, 0x90, 0x3d, 0xba, 0x29, 0x03, 0x49};
+	key = (uint8_t[32]) {
+		0x51, 0x48, 0xe5, 0xfd, 0x8e, 0x2f, 0xc5, 0x9b, 0x13, 0xdc, 0xe6, 0xda, 0xa7, 0x74, 0xf5, 0xa3,
+		0x93, 0x2a, 0x30, 0x15, 0xce, 0xb3, 0xba, 0x70, 0x41, 0x43, 0x76, 0x24, 0xa7, 0xf2, 0x59, 0x9c
+	};
+
+	key_size = 32;
 
 	plaintext = (uint8_t[64]) {
 		0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf,
@@ -110,17 +112,22 @@ int main(void) {
 
 	msg_size = 64;
 
+	printf("\nTest 256\n");
+	rval = aes_256(ciphertext, plaintext, key, key_size, 0);
+	print_value_8(ciphertext, 8);
+
+
 	printf("\nOriginal plaintext is:\n");
 	print_value_8(plaintext, msg_size);
 	printf("\n");
 
-	aes_128_cbc(ciphertext, plaintext, msg_size, iv, key, key_size, 0);
+	aes_256_cbc(ciphertext, plaintext, msg_size, iv, key, key_size, 0);
 
 	printf("Ciphertext is:\n");
 	print_value_8(ciphertext, msg_size);
 	printf("\n");
 
-	aes_128_cbc(plaintext, ciphertext, msg_size, iv, key, key_size, 1);
+	aes_256_cbc(plaintext, ciphertext, msg_size, iv, key, key_size, 1);
 
 	printf("Decrypted plaintext is:\n");
 	print_value_8(plaintext, msg_size);
