@@ -241,7 +241,7 @@ uint64_t* sha_512_hash(uint8_t* message, uint64_t length) {
 #endif
 
 	for (i=0; i<num_blocks; i++) {
-		//padded message consists of 1024 bit sized blocks, split into groups of 63 bits.
+		//padded message consists of 1024 bit sized blocks, split into groups of 64 bits.
 		//the pointers to the beginning of each block is at intervals of 32 (16 * 64-bits = 1024 bit blocks)
 		block[i] = padded_msg + i*16;
 	}
@@ -316,8 +316,6 @@ uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 
 	//512 bit blocks
 	int padded_msg_length = msg_length + 1 + k + 64;
-	int num_blocks = padded_msg_length / 512;
-
 	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
 
 	//message gets split into groups of 8 bits fit into the padded_msg array
@@ -371,11 +369,12 @@ uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 		padded_msg[i] = msg_length_base256[j];
 	}
 
-	for (i=0; i<num_blocks * 64; i++) {
+	/*
+	for (i=0; i < padded_msg_length / 8; i++) {
 		printf(BYTETOBINARYPATTERN" ", BYTETOBINARY(padded_msg[i]));
 	}
 	printf("\n");
-
+	*/
 
 	return (uint32_t*) padded_msg;
 }
@@ -386,8 +385,6 @@ uint64_t* sha_512_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 
 	//1024 bit blocks
 	int padded_msg_length = msg_length + 1 + k + 128;
-	int num_blocks = padded_msg_length / 1024;
-
 	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
 
 	//message gets split into groups of 8 bits fit into the padded_msg array
@@ -448,11 +445,12 @@ uint64_t* sha_512_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 		padded_msg[i] = msg_length_base256[j];
 	}
 
+	/*
 	for (i=0; i< padded_msg_length / 8; i++) {
 		printf(BYTETOBINARYPATTERN" ", BYTETOBINARY(padded_msg[i]));
 	}
 	printf("\n");
-
+	*/
 
 	return (uint64_t*) padded_msg;
 }
