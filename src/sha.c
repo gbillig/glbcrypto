@@ -73,10 +73,11 @@ void sha_testcase() {
 	uint64_t length = strlen(message) * 8; //3 * 8 bits
 
 	printf("SHA256 Test 1\nInput:\n%s\n", message);
-	uint32_t* hash32 = sha_256_hash((uint8_t*) message, length);
+	uint8_t* hash32 = (uint8_t*) malloc(sizeof(uint8_t) * 32);
+	sha_256_hash(hash32, (uint8_t*) message, length);
 
 	printf("Output:\n");
-	print_value_32(hash32, 8);
+	print_value_8(hash32, 32);
 	free(hash32);
 
 	// 1421 = 0b10110001101 (11 bits)
@@ -86,24 +87,25 @@ void sha_testcase() {
 	length = 11; //11 bits
 
 	printf("SHA256 Test 2\nInput:\n%d\n", message2[0]);
-	hash32 = sha_256_hash((uint8_t*) message2, length);
+	sha_256_hash(hash32, (uint8_t*) message2, length);
 
 	printf("Output:\n");
-	print_value_32(hash32, 8);
+	print_value_8(hash32, 32);
 	free(hash32);
 
 	char message3[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
 	length = strlen(message3) * 8; // each char is 8 bits
 
 	printf("SHA512 Test\nInput:\n%s\n", message3);
-	uint64_t* hash64 = sha_512_hash((uint8_t*) message3, length);
+	uint8_t* hash64 = (uint8_t*) malloc(sizeof(uint8_t) * 64);
+	sha_512_hash(hash64, (uint8_t*) message3, length);
 
 	printf("Output:\n");
-	print_value_64(hash64, 8);
+	print_value_8(hash64, 64);
 	free(hash64);
 }
 
-uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
+int sha_256_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 
 	int i,j;
 
@@ -114,22 +116,25 @@ uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
 		k += 512;
 	}
 
+	//512-bit blocks
 	int padded_msg_length = length + 1 + k + 64;
 	int num_blocks =  padded_msg_length / 512;
-	uint32_t** block = (uint32_t**) malloc(sizeof(uint32_t*) * num_blocks);
-	uint32_t* padded_msg;
 
-	padded_msg = sha_256_pad_message(message, length, k);
+	uint32_t** block = (uint32_t**) malloc(sizeof(uint32_t*) * num_blocks);
+	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
+
+	sha_256_pad_message(padded_msg, input_msg, length, k);
+	uint32_t* padded_msg_32 = (uint32_t*) padded_msg;
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
 	//byte swap is necessary if architecture is little endian
 	//since we are converting an array of 8 bit integers to an array of 32 bit integers
 	for (i=0; i<num_blocks*16; i++) {
-		padded_msg[i] = ((padded_msg[i]>>24) & 0xff)      | // move byte 3 to byte 0
-						((padded_msg[i]>>8)  & 0xff00)    | // move byte 2 to byte 1
-						((padded_msg[i]<<8)  & 0xff0000)  | // move byte 1 to byte 2
-						((padded_msg[i]<<24) & 0xff000000); // move byte 0 to byte 3
+		padded_msg_32[i] = ((padded_msg_32[i]>>24) & 0xff)      | // move byte 3 to byte 0
+						((padded_msg_32[i]>>8)  & 0xff00)    | // move byte 2 to byte 1
+						((padded_msg_32[i]<<8)  & 0xff0000)  | // move byte 1 to byte 2
+						((padded_msg_32[i]<<24) & 0xff000000); // move byte 0 to byte 3
 	}
 
 #endif
@@ -137,31 +142,23 @@ uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
 	for (i=0; i<num_blocks; i++) {
 		//padded message consists of 512 bit sized blocks, split into groups of 32 bits.
 		//the pointers to the beginning of each block is at intervals of 16 (16 * 32-bits = 512 bit blocks)
-		block[i] = padded_msg + i*16;
+		block[i] = padded_msg_32 + i*16;
 	}
 
 	//result : M(i)_j = block[i][j]
 
-	uint32_t H1 = 0x6a09e667;
-	uint32_t H2 = 0xbb67ae85;
-	uint32_t H3 = 0x3c6ef372;
-	uint32_t H4 = 0xa54ff53a;
-	uint32_t H5 = 0x510e527f;
-	uint32_t H6 = 0x9b05688c;
-	uint32_t H7 = 0x1f83d9ab;
-	uint32_t H8 = 0x5be0cd19;
-
 	uint32_t a, b, c, d, e, f, g, h;
+	uint32_t H[8] = {0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19};
 
 	for (i=0; i<num_blocks; i++) {
-		a = H1;
-		b = H2;
-		c = H3;
-		d = H4;
-		e = H5;
-		f = H6;
-		g = H7;
-		h = H8;
+		a = H[0];
+		b = H[1];
+		c = H[2];
+		d = H[3];
+		e = H[4];
+		f = H[5];
+		g = H[6];
+		h = H[7];
 
 		uint32_t* W = expanded_message_32(block[i]);
 		for (j=0; j<64; j++) {
@@ -178,34 +175,32 @@ uint32_t* sha_256_hash(uint8_t* message, uint64_t length) {
 			a = T1 + T2;
 		}
 
-		H1 = a + H1;
-		H2 = b + H2;
-		H3 = c + H3;
-		H4 = d + H4;
-		H5 = e + H5;
-		H6 = f + H6;
-		H7 = g + H7;
-		H8 = h + H8;
+		H[0] = a + H[0];
+		H[1] = b + H[1];
+		H[2] = c + H[2];
+		H[3] = d + H[3];
+		H[4] = e + H[4];
+		H[5] = f + H[5];
+		H[6] = g + H[6];
+		H[7] = h + H[7];
 
 		free(W);
 	}
 
-	uint32_t* hash = (uint32_t*) malloc(sizeof(uint32_t) * 8);
-	hash[0] = H1;
-	hash[1] = H2;
-	hash[2] = H3;
-	hash[3] = H4;
-	hash[4] = H5;
-	hash[5] = H6;
-	hash[6] = H7;
-	hash[7] = H8;
+	//convert 32-bit variables into 8-bit output array
+	for (i = 0; i < 8; i++) {
+		output_msg[i * 4 + 0] = H[i] >> 24;
+		output_msg[i * 4 + 1] = H[i] >> 16;
+		output_msg[i * 4 + 2] = H[i] >> 8;
+		output_msg[i * 4 + 3] = H[i];
+	}
 
 	free(padded_msg);
 	free(block);
-	return hash;
+	return 0;
 }
 
-uint64_t* sha_512_hash(uint8_t* message, uint64_t length) {
+int sha_512_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 
 	int i,j;
 
@@ -216,26 +211,29 @@ uint64_t* sha_512_hash(uint8_t* message, uint64_t length) {
 		k += 1024;
 	}
 
+	//1024-bit blocks
 	int padded_msg_length = length + 1 + k + 128;
 	int num_blocks =  padded_msg_length / 1024;
 	uint64_t** block = (uint64_t**) malloc(sizeof(uint64_t*) * num_blocks);
-	uint64_t* padded_msg;
+	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
 
-	padded_msg = sha_512_pad_message(message, length, k);
+	sha_512_pad_message(padded_msg, input_msg, length, k);
+
+	uint64_t* padded_msg_64 = (uint64_t*) padded_msg;
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 
 	//byte swap is necessary if architecture is little endian
 	//since we are converting an array of 8 bit integers to an array of 64 bit integers
 	for (i=0; i<num_blocks*16; i++) {
-		padded_msg[i] = ((padded_msg[i]>>56) & 0xff)              | // move byte 7 to byte 0
-						((padded_msg[i]>>40) & 0xff00)            | // move byte 6 to byte 1
-						((padded_msg[i]>>24) & 0xff0000)          | // move byte 5 to byte 2
-						((padded_msg[i]>>8)  & 0xff000000)        | // move byte 4 to byte 3
-						((padded_msg[i]<<8)  & 0xff00000000)      | // move byte 3 to byte 4
-						((padded_msg[i]<<24) & 0xff0000000000)    | // move byte 1 to byte 5
-						((padded_msg[i]<<40) & 0xff000000000000)  | // move byte 2 to byte 6
-						((padded_msg[i]<<56) & 0xff00000000000000); // move byte 0 to byte 7
+		padded_msg_64[i] = ((padded_msg_64[i]>>56) & 0xff)              | // move byte 7 to byte 0
+						((padded_msg_64[i]>>40) & 0xff00)            | // move byte 6 to byte 1
+						((padded_msg_64[i]>>24) & 0xff0000)          | // move byte 5 to byte 2
+						((padded_msg_64[i]>>8)  & 0xff000000)        | // move byte 4 to byte 3
+						((padded_msg_64[i]<<8)  & 0xff00000000)      | // move byte 3 to byte 4
+						((padded_msg_64[i]<<24) & 0xff0000000000)    | // move byte 1 to byte 5
+						((padded_msg_64[i]<<40) & 0xff000000000000)  | // move byte 2 to byte 6
+						((padded_msg_64[i]<<56) & 0xff00000000000000); // move byte 0 to byte 7
 	}
 
 #endif
@@ -243,31 +241,24 @@ uint64_t* sha_512_hash(uint8_t* message, uint64_t length) {
 	for (i=0; i<num_blocks; i++) {
 		//padded message consists of 1024 bit sized blocks, split into groups of 64 bits.
 		//the pointers to the beginning of each block is at intervals of 32 (16 * 64-bits = 1024 bit blocks)
-		block[i] = padded_msg + i*16;
+		block[i] = padded_msg_64 + i*16;
 	}
 
 	//result : M(i)_j = block[i][j]
 
-	uint64_t H1 = 0x6a09e667f3bcc908;
-	uint64_t H2 = 0xbb67ae8584caa73b;
-	uint64_t H3 = 0x3c6ef372fe94f82b;
-	uint64_t H4 = 0xa54ff53a5f1d36f1;
-	uint64_t H5 = 0x510e527fade682d1;
-	uint64_t H6 = 0x9b05688c2b3e6c1f;
-	uint64_t H7 = 0x1f83d9abfb41bd6b;
-	uint64_t H8 = 0x5be0cd19137e2179;
-
 	uint64_t a, b, c, d, e, f, g, h;
+	uint64_t H[8] = {0x6a09e667f3bcc908, 0xbb67ae8584caa73b, 0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
+					 0x510e527fade682d1, 0x9b05688c2b3e6c1f, 0x1f83d9abfb41bd6b, 0x5be0cd19137e2179};
 
 	for (i=0; i<num_blocks; i++) {
-		a = H1;
-		b = H2;
-		c = H3;
-		d = H4;
-		e = H5;
-		f = H6;
-		g = H7;
-		h = H8;
+		a = H[0];
+		b = H[1];
+		c = H[2];
+		d = H[3];
+		e = H[4];
+		f = H[5];
+		g = H[6];
+		h = H[7];
 
 		uint64_t* W = expanded_message_64(block[i]);
 		for (j=0; j<80; j++) {
@@ -284,43 +275,41 @@ uint64_t* sha_512_hash(uint8_t* message, uint64_t length) {
 			a = T1 + T2;
 		}
 
-		H1 = a + H1;
-		H2 = b + H2;
-		H3 = c + H3;
-		H4 = d + H4;
-		H5 = e + H5;
-		H6 = f + H6;
-		H7 = g + H7;
-		H8 = h + H8;
+		H[0] = a + H[0];
+		H[1] = b + H[1];
+		H[2] = c + H[2];
+		H[3] = d + H[3];
+		H[4] = e + H[4];
+		H[5] = f + H[5];
+		H[6] = g + H[6];
+		H[7] = h + H[7];
 
 		free(W);
 	}
 
-	uint64_t* hash = (uint64_t*) malloc(sizeof(uint64_t) * 8);
-	hash[0] = H1;
-	hash[1] = H2;
-	hash[2] = H3;
-	hash[3] = H4;
-	hash[4] = H5;
-	hash[5] = H6;
-	hash[6] = H7;
-	hash[7] = H8;
+	//convert 64-bit variables into 8-bit output array
+	for (i = 0; i < 8; i++) {
+		output_msg[i * 8 + 0] = H[i] >> 56;
+		output_msg[i * 8 + 1] = H[i] >> 48;
+		output_msg[i * 8 + 2] = H[i] >> 40;
+		output_msg[i * 8 + 3] = H[i] >> 32;
+		output_msg[i * 8 + 4] = H[i] >> 24;
+		output_msg[i * 8 + 5] = H[i] >> 16;
+		output_msg[i * 8 + 6] = H[i] >> 8;
+		output_msg[i * 8 + 7] = H[i];
+	}
 
 	free(padded_msg);
 	free(block);
-	return hash;
+	return 0;
 }
 
-uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
+int sha_256_pad_message(uint8_t* padded_msg, uint8_t* msg, uint64_t msg_length, int k) {
 	int i,j;
-
-	//512 bit blocks
-	int padded_msg_length = msg_length + 1 + k + 64;
-	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
 
 	//message gets split into groups of 8 bits fit into the padded_msg array
 	for (i = 0; i < msg_length / 8; i++) {
-		padded_msg[i] = message[i];
+		padded_msg[i] = msg[i];
 	}
 
 	int num_padding_zeroes = k;
@@ -333,7 +322,7 @@ uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 		uint8_t message_mask = ((1 << msg_remainder_by_eight) - 1) << (8 - msg_remainder_by_eight);
 
 		//shift message to align the value with the MSB (left side)
-		uint8_t msg_section = (message[i] << (8-msg_remainder_by_eight)) & message_mask;
+		uint8_t msg_section = (msg[i] << (8-msg_remainder_by_eight)) & message_mask;
 
 		//append the "1" and complete the 8-bit value with zeroes
 		padded_msg[i] = msg_section | (1 << (7-msg_remainder_by_eight));
@@ -376,20 +365,16 @@ uint32_t* sha_256_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 	printf("\n");
 	*/
 
-	return (uint32_t*) padded_msg;
+	return 0;
 }
 
 //msg_length can be up to 128 bits long, but this implementation only supports 64-bit variables
-uint64_t* sha_512_pad_message(uint8_t* message, uint64_t msg_length, int k) {
+int sha_512_pad_message(uint8_t* padded_msg, uint8_t* msg, uint64_t msg_length, int k) {
 	int i,j;
-
-	//1024 bit blocks
-	int padded_msg_length = msg_length + 1 + k + 128;
-	uint8_t* padded_msg = (uint8_t*) malloc(sizeof(uint8_t) * padded_msg_length / 8);
 
 	//message gets split into groups of 8 bits fit into the padded_msg array
 	for (i = 0; i < msg_length / 8; i++) {
-		padded_msg[i] = message[i];
+		padded_msg[i] = msg[i];
 	}
 
 	int num_padding_zeroes = k;
@@ -402,7 +387,7 @@ uint64_t* sha_512_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 		uint8_t message_mask = ((1 << msg_remainder_by_eight) - 1) << (8 - msg_remainder_by_eight);
 
 		//shift message to align the value with the MSB (left side)
-		uint8_t msg_section = (message[i] << (8-msg_remainder_by_eight)) & message_mask;
+		uint8_t msg_section = (msg[i] << (8-msg_remainder_by_eight)) & message_mask;
 
 		//append the "1" and complete the 8-bit value with zeroes
 		padded_msg[i] = msg_section | (1 << (7-msg_remainder_by_eight));
@@ -452,5 +437,5 @@ uint64_t* sha_512_pad_message(uint8_t* message, uint64_t msg_length, int k) {
 	printf("\n");
 	*/
 
-	return (uint64_t*) padded_msg;
+	return 0;
 }

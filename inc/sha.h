@@ -10,11 +10,11 @@
 #define INC_SHA_H_
 
 void sha_testcase();
-uint32_t* sha_256_hash(uint8_t* message, uint64_t length);
-uint64_t* sha_512_hash(uint8_t* message, uint64_t length);
+int sha_256_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length);
+int sha_512_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length);
 
-uint32_t* sha_256_pad_message(uint8_t* message, uint64_t length, int k);
-uint64_t* sha_512_pad_message(uint8_t* message, uint64_t length, int k);
+int sha_256_pad_message(uint8_t* padded_msg, uint8_t* input_msg, uint64_t length, int k);
+int sha_512_pad_message(uint8_t* padded_msg, uint8_t* input_msg, uint64_t length, int k);
 
 uint32_t Ch_32(uint32_t x, uint32_t y, uint32_t z);
 uint64_t Ch_64(uint64_t x, uint64_t y, uint64_t z);
