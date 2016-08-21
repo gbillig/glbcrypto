@@ -18,7 +18,7 @@ bin/misc.o \
 bin/mode_of_operation.o \
 bin/aes_helper.o \
 bin/aes_cipher.o \
-bin/aes_family.o \
+bin/aes.o \
 bin/sha_helper.o \
 bin/sha.o 
 

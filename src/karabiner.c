@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "../inc/aes.h"
 #include "../inc/aes_cipher.h"
-#include "../inc/aes_family.h"
 #include "../inc/sha.h"
 #include "../inc/misc.h"
 

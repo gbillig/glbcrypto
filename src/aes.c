@@ -1,5 +1,5 @@
 /*
- * aes_family.c
+ * aes.c
  *
  *  Created on: Apr 10, 2016
  *      Author: glb

@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "../inc/sha.h"
+#include "../inc/sha_helper.h"
 #include "../inc/misc.h"
 
 #define BYTETOBINARYPATTERN "%d%d%d%d%d%d%d%d"
@@ -74,7 +75,7 @@ void sha_testcase() {
 
 	printf("SHA256 Test 1\nInput:\n%s\n", message);
 	uint8_t* hash32 = (uint8_t*) malloc(sizeof(uint8_t) * 32);
-	sha_256_hash(hash32, (uint8_t*) message, length);
+	sha_256(hash32, (uint8_t*) message, length);
 
 	printf("Output:\n");
 	print_value_8(hash32, 32);
@@ -87,7 +88,7 @@ void sha_testcase() {
 	length = 11; //11 bits
 
 	printf("SHA256 Test 2\nInput:\n%d\n", message2[0]);
-	sha_256_hash(hash32, (uint8_t*) message2, length);
+	sha_256(hash32, (uint8_t*) message2, length);
 
 	printf("Output:\n");
 	print_value_8(hash32, 32);
@@ -98,14 +99,14 @@ void sha_testcase() {
 
 	printf("SHA512 Test\nInput:\n%s\n", message3);
 	uint8_t* hash64 = (uint8_t*) malloc(sizeof(uint8_t) * 64);
-	sha_512_hash(hash64, (uint8_t*) message3, length);
+	sha_512(hash64, (uint8_t*) message3, length);
 
 	printf("Output:\n");
 	print_value_8(hash64, 64);
 	free(hash64);
 }
 
-int sha_256_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
+int sha_256(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 
 	int i,j;
 
@@ -200,7 +201,7 @@ int sha_256_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 	return 0;
 }
 
-int sha_512_hash(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
+int sha_512(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 
 	int i,j;
 
