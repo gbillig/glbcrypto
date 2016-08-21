@@ -8,10 +8,10 @@ ARFLAGS = rcs
 
 OBJS = \
 bin/misc.o \
-bin/karabiner.o
+bin/glbcrypto.o
 
 OUT = \
-bin/karabiner
+bin/glbcrypto_tests
 
 LIB_OBJS = \
 bin/misc.o \
@@ -39,4 +39,4 @@ $(LIB_OUT): $(LIB_OBJS)
 	$(AR) $(ARFLAGS) $@ $(LIB_OBJS)
 
 clean:
-	rm -f bin/*.o bin/karabiner lib/libglbcrypto.a
+	rm -f bin/*.o bin/glbcrypto_tests lib/libglbcrypto.a
