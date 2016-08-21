@@ -8,6 +8,10 @@
 #ifndef INC_SHA_HELPER_H_
 #define INC_SHA_HELPER_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint32_t Ch_32(uint32_t x, uint32_t y, uint32_t z);
 uint64_t Ch_64(uint64_t x, uint64_t y, uint64_t z);
 uint32_t Maj_32(uint32_t x, uint32_t y, uint32_t z);
@@ -29,5 +33,9 @@ uint64_t small_sigma1_64(uint64_t x);
 
 uint32_t* expanded_message_32(uint32_t* M);
 uint64_t* expanded_message_64(uint64_t* M);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_SHA_HELPER_H_ */
