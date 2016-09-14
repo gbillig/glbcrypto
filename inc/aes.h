@@ -12,7 +12,7 @@
 extern "C" {
 #endif
 
-int aes(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key[], int key_size, int mode);
+int aes(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size, int mode);
 
 int aes_128(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size, int mode);
 int aes_192(uint8_t* output_msg, uint8_t* input_msg, uint8_t* key, int key_size, int mode);
