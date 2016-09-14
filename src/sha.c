@@ -106,6 +106,7 @@ void sha_testcase() {
 	free(hash64);
 }
 
+// TODO change length from bits to bytes
 int sha_256(uint8_t* output_msg, uint8_t* input_msg, uint64_t length) {
 
 	int i,j;

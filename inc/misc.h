@@ -21,6 +21,9 @@ void copy_array_32(uint32_t* src, uint32_t* dst, int length);
 
 void get_random(uint8_t* output, int size);
 
+void pad_message(uint8_t* dst, uint8_t* src, int length, int block_size);
+void strip_message_pad(uint8_t* dst, uint8_t* src, int length, int block_size);
+
 #ifdef __cplusplus
 }
 #endif

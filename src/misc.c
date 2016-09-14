@@ -59,3 +59,25 @@ void get_random(uint8_t* output, int size) {
 	fclose(random_data);
 }
 
+// How does a user know how much memory to allocate for the output of the padding?
+void pad_message(uint8_t* dst, uint8_t* src, int length, int block_size) {
+	int i, k;
+	k = block_size - (length % block_size);
+
+	for (i = 0; i < length + k; i++) {
+		if (i < length) {
+			dst[i] = src[i];
+		} else {
+			dst[i] = k;
+		}
+	}
+}
+
+void strip_message_pad(uint8_t* dst, uint8_t* src, int length, int block_size) {
+	int i, k;
+	k = src[length - 1];
+
+	for (i = 0; i < length - k; i++) {
+		dst[i] = src[i];
+	}
+}
