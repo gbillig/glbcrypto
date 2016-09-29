@@ -104,12 +104,13 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 	uint8_t t3Array[4];
 
 	int byte_index;
-	for(i=0; i<expansion_rounds; i++) {
-		byte_index = i*4;
-		if (i<4) {
-			t = k(key, byte_index);
+	for(i = 0; i < expansion_rounds; i++) {
+		byte_index = i * 4;
+
+		// Copy the key into beginning of the expanded key
+		if (i < small_coef) {
 			for (j=0; j<4; j++) {
-				expanded_key[byte_index + j] = *(t+j);
+				expanded_key[byte_index + j] = key[byte_index + j];
 			}
 			//printf("Round %d: K(%d)\n", i, byte_index);
 		} else if (i % small_coef == 0) {
@@ -177,13 +178,13 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 		}
 	}
 
-	/*
+
 	printf("Expanded Key:\n");
 	for(i=0; i<expanded_key_size; i++) {
 		printf("%02x ", expanded_key[i]);
 	}
 	printf("\n");
-	*/
+
 
 	return 0;
 }
