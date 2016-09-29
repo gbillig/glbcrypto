@@ -56,3 +56,26 @@ int cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint
 
 	return 0;
 }
+
+int ecb(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode,
+		int (*cipher)(uint8_t*, uint8_t*, uint8_t*, int, int)) {
+
+	int i, j;
+
+	uint8_t* in_state = malloc(sizeof(uint8_t) * 16);
+	uint8_t* out_state = malloc(sizeof(uint8_t) * 16);
+
+	for (i = 0; i * 16 < msg_size; i++) {
+		for (j = 0; j < 16; j++) {
+			in_state[j] = input_msg[i * 16 + j];
+		}
+
+		(*cipher)(out_state, in_state, key, key_size, mode);
+
+		for (j = 0; j < 16; j++) {
+			output_msg[i * 16 + j] = out_state[j];
+		}
+	}
+
+	return 0;
+}

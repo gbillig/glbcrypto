@@ -15,6 +15,9 @@ extern "C" {
 int cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode,
 		int (*cipher)(uint8_t*, uint8_t*, uint8_t*, int, int));
 
+int ecb(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode,
+		int (*cipher)(uint8_t*, uint8_t*, uint8_t*, int, int));
+
 #ifdef __cplusplus
 }
 #endif

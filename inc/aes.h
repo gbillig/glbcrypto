@@ -22,6 +22,10 @@ int aes_128_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* 
 int aes_192_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode);
 int aes_256_cbc(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* iv, uint8_t* key, int key_size, int mode);
 
+int aes_128_ecb(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode);
+int aes_192_ecb(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode);
+int aes_256_ecb(uint8_t* output_msg, uint8_t* input_msg, int msg_size, uint8_t* key, int key_size, int mode);
+
 #ifdef __cplusplus
 }
 #endif
