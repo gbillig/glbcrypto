@@ -52,6 +52,7 @@ int main(void) {
 	printf("\n");
 	*/
 
+
 	uint8_t* key = malloc(sizeof(uint8_t) * 16);
 	key = (uint8_t[16]) {0x0f, 0x15, 0x71, 0xc9, 0x47, 0xd9, 0xe8, 0x59, 0x0c, 0xb7, 0xad, 0xd6, 0xaf, 0x7f, 0x67, 0x98};
 	key = (uint8_t[16]) {0x56, 0xe4, 0x7a, 0x38, 0xc5, 0x59, 0x89, 0x74, 0xbc, 0x46, 0x90, 0x3d, 0xba, 0x29, 0x03, 0x49};
@@ -67,6 +68,7 @@ int main(void) {
 
 	int key_size = 16;
 	int msg_size = 16;
+
 
 	printf("\nOriginal plaintext is:\n");
 	print_value_8(plaintext, msg_size);
@@ -90,9 +92,14 @@ int main(void) {
 	print_value_8(plaintext, msg_size);
 	printf("\n");
 
+
 	free(ciphertext);
 
+
 	//---------------
+	// AES_256_ECB
+	//---------------
+
 
 	key = (uint8_t[32]) {
 		0x51, 0x48, 0xe5, 0xfd, 0x8e, 0x2f, 0xc5, 0x9b, 0x13, 0xdc, 0xe6, 0xda, 0xa7, 0x74, 0xf5, 0xa3,
@@ -118,13 +125,13 @@ int main(void) {
 	print_value_8(plaintext, msg_size);
 	printf("\n");
 
-	aes_256_cbc(ciphertext, plaintext, msg_size, iv, key, key_size, 0);
+	aes_256_ecb(ciphertext, plaintext, msg_size, key, key_size, 0);
 
 	printf("Ciphertext is:\n");
 	print_value_8(ciphertext, msg_size);
 	printf("\n");
 
-	aes_256_cbc(plaintext, ciphertext, msg_size, iv, key, key_size, 1);
+	aes_256_ecb(plaintext, ciphertext, msg_size, key, key_size, 1);
 
 	printf("Decrypted plaintext is:\n");
 	print_value_8(plaintext, msg_size);
@@ -132,8 +139,10 @@ int main(void) {
 
 	free(ciphertext);
 
+
+
 	//---------------
-	//AGAIN
+	// AES_256_CBC
 	//---------------
 
 	key = (uint8_t[32]) {
@@ -159,19 +168,22 @@ int main(void) {
 
 	printf("\nTest 2 256\n");
 
-	printf("\nOriginal plaintext is:\n");
+	printf("\nKey:\n");
+	print_value_8(key, key_size);
+
+	printf("\nOriginal plaintext:\n");
 	print_value_8(plaintext, msg_size);
 	printf("\n");
 
-	aes_256_cbc(ciphertext, plaintext, msg_size, iv, key, key_size, 0);
+	aes_256_ecb(ciphertext, plaintext, msg_size, key, key_size, 0);
 
-	printf("Ciphertext is:\n");
+	printf("Ciphertext:\n");
 	print_value_8(ciphertext, msg_size);
 	printf("\n");
 
-	aes_256_cbc(plaintext, ciphertext, msg_size, iv, key, key_size, 1);
+	aes_256_ecb(plaintext, ciphertext, msg_size, key, key_size, 1);
 
-	printf("Decrypted plaintext is:\n");
+	printf("Decrypted plaintext:\n");
 	print_value_8(plaintext, msg_size);
 	printf("\n");
 

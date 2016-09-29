@@ -103,6 +103,18 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 	uint8_t t2Array[4];
 	uint8_t t3Array[4];
 
+	// Key expansion has 4 types of rounds:
+	// Type A: copy key into expanded key
+	// Type B: subword(rotword(ek())) XOR rcon() XOR ek()
+	// Type C: ek() XOR ek()
+	// Type D (ONLY FOR 32-BIT KEY): subword(ek()) XOR ek()
+
+	// Small coef can have the following values:
+	// 16-bit key: small_coef = 4
+	// 24-bit key: small_coef = 6
+	// 32-bit key: small_coef = 8
+
+
 	int byte_index;
 	for(i = 0; i < expansion_rounds; i++) {
 		byte_index = i * 4;
@@ -141,18 +153,18 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 				expanded_key[byte_index + j] = t1Array[j] ^ t2Array[j] ^ t3Array[j];
 			}
 			//printf("Round %d: SubWord(RotWord(EK(%d-1)*4)) XOR Rcon((%d/%d)-1) XOR EK((%d-%d)*4)\n", i, i, i, small_coef, i, small_coef);
-
 		} else if (key_size == 32 && (i-4) % 8 == 0) {
 			t = ek(expanded_key, (i-1)*4);
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
+
 			t = subWord(t1Array, 4, 1);
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
 
-			t = ek(expanded_key, (i-8)*4);
+			t = ek(expanded_key, (i-small_coef)*4);
 			for (j=0; j<4; j++) {
 				t2Array[j] = *(t+j);
 			}
@@ -166,6 +178,7 @@ uint8_t aes_expand_key(uint8_t expanded_key[], uint8_t key[], int key_size) {
 			for (j=0; j<4; j++) {
 				t1Array[j] = *(t+j);
 			}
+
 			t = ek(expanded_key, (i-small_coef)*4);
 			for (j=0; j<4; j++) {
 				t2Array[j] = *(t+j);
